@@ -163,203 +163,202 @@
         </div>
     </footer>
 
-    <!-- JavaScript for Interactivity -->
-    <script>
-        // Utility function to generate star rating
-        function generateStars(rating) {
-            const fullStars = Math.floor(rating);
-            const halfStar = rating % 1 >= 0.5 ? 1 : 0;
-            let stars = '';
-            for (let i = 0; i < fullStars; i++) {
-                stars += '<i class="fas fa-star" aria-hidden="true"></i>';
-            }
-            if (halfStar) {
-                stars += '<i class="fas fa-star-half-alt" aria-hidden="true"></i>';
-            }
-            for (let i = fullStars + halfStar; i < 5; i++) {
-                stars += '<i class="far fa-star" aria-hidden="true"></i>';
-            }
-            return stars;
+   <script>
+    // Utility function to generate star rating
+    function generateStars(rating) {
+        const fullStars = Math.floor(rating);
+        const halfStar = rating % 1 >= 0.5 ? 1 : 0;
+        let stars = '';
+        for (let i = 0; i < fullStars; i++) {
+            stars += '<i class="fas fa-star" aria-hidden="true"></i>';
+        }
+        if (halfStar) {
+            stars += '<i class="fas fa-star-half-alt" aria-hidden="true"></i>';
+        }
+        for (let i = fullStars + halfStar; i < 5; i++) {
+            stars += '<i class="far fa-star" aria-hidden="true"></i>';
+        }
+        return stars;
+    }
+
+    // Fetch and render footer categories
+    async function fetchFooterCategories() {
+        try {
+            const response = await fetch('https://learnhub-r94s.onrender.com/api/categories');
+            const categories = await response.json();
+            const footerCategories = document.getElementById('footer-categories');
+            footerCategories.innerHTML = categories.map(category => `
+                <li><a href="categories.html" class="text-gray-400 hover:text-white transition" aria-label="Explore ${category.title} courses">${category.title}</a></li>
+            `).join('');
+        } catch (err) {
+            console.error('Error fetching footer categories:', err);
+        }
+    }
+
+    // Fetch course details
+    async function fetchCourseDetails() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('courseId');
+        if (!courseId) {
+            document.getElementById('course-details').innerHTML = '<p class="text-red-600 text-center">No course ID provided.</p>';
+            return;
         }
 
-        // Fetch and render footer categories
-        async function fetchFooterCategories() {
-            try {
-                const response = await fetch('http://localhost:3000/api/categories');
-                const categories = await response.json();
-                const footerCategories = document.getElementById('footer-categories');
-                footerCategories.innerHTML = categories.map(category => `
-                    <li><a href="categories.html" class="text-gray-400 hover:text-white transition" aria-label="Explore ${category.title} courses">${category.title}</a></li>
-                `).join('');
-            } catch (err) {
-                console.error('Error fetching footer categories:', err);
+        try {
+            const response = await fetch(`https://learnhub-r94s.onrender.com/api/courses/${courseId}`);
+            const course = await response.json();
+            if (!response.ok) {
+                throw new Error(course.error || 'Failed to fetch course details');
             }
-        }
-
-        // Fetch course details
-        async function fetchCourseDetails() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const courseId = urlParams.get('courseId');
-            if (!courseId) {
-                document.getElementById('course-details').innerHTML = '<p class="text-red-600 text-center">No course ID provided.</p>';
-                return;
-            }
-
-            try {
-                const response = await fetch(`http://localhost:3000/api/courses/${courseId}`);
-                const course = await response.json();
-                if (!response.ok) {
-                    throw new Error(course.error || 'Failed to fetch course details');
-                }
-                const courseDetails = document.getElementById('course-details');
-                courseDetails.innerHTML = `
-                    <div class="bg-white rounded-lg shadow-sm p-8">
-                        <div class="flex flex-col md:flex-row gap-8">
-                            <div class="md:w-1/2">
-                                <img src="${course.image}" alt="${course.title} preview" class="w-full h-64 object-cover rounded-md">
-                            </div>
-                            <div class="md:w-1/2">
-                                <h1 class="text-3xl font-bold text-gray-800 mb-4">${course.title}</h1>
-                                <p class="text-gray-600 mb-4">${course.description}</p>
-                                <div class="flex items-center mb-4">
-                                    <div class="flex text-yellow-400 text-sm">
-                                        ${generateStars(course.rating)}
-                                    </div>
-                                    <span class="text-gray-600 text-sm ml-2">(${course.reviews} reviews)</span>
+            const courseDetails = document.getElementById('course-details');
+            courseDetails.innerHTML = `
+                <div class="bg-white rounded-lg shadow-sm p-8">
+                    <div class="flex flex-col md:flex-row gap-8">
+                        <div class="md:w-1/2">
+                            <img src="${course.image}" alt="${course.title} preview" class="w-full h-64 object-cover rounded-md">
+                        </div>
+                        <div class="md:w-1/2">
+                            <h1 class="text-3xl font-bold text-gray-800 mb-4">${course.title}</h1>
+                            <p class="text-gray-600 mb-4">${course.description}</p>
+                            <div class="flex items-center mb-4">
+                                <div class="flex text-yellow-400 text-sm">
+                                    ${generateStars(course.rating)}
                                 </div>
-                                <p class="text-gray-600 mb-2"><strong>Category:</strong> ${course.category ? course.category.title : 'Unknown'}</p>
-                                <p class="text-gray-600 mb-2"><strong>Level:</strong> ${course.level}</p>
-                                <p class="text-gray-600 mb-2"><strong>Lectures:</strong> ${course.lectures}</p>
-                                ${course.isBestseller ? '<span class="inline-block bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded mt-2">Bestseller</span>' : ''}
+                                <span class="text-gray-600 text-sm ml-2">(${course.reviews} reviews)</span>
                             </div>
+                            <p class="text-gray-600 mb-2"><strong>Category:</strong> ${course.category ? course.category.title : 'Unknown'}</p>
+                            <p class="text-gray-600 mb-2"><strong>Level:</strong> ${course.level}</p>
+                            <p class="text-gray-600 mb-2"><strong>Lectures:</strong> ${course.lectures}</p>
+                            ${course.isBestseller ? '<span class="inline-block bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded mt-2">Bestseller</span>' : ''}
                         </div>
                     </div>
-                `;
-            } catch (err) {
-                console.error('Error fetching course details:', err);
-                document.getElementById('course-details').innerHTML = '<p class="text-red-600 text-center">Failed to load course details. Please try again.</p>';
-            }
+                </div>
+            `;
+        } catch (err) {
+            console.error('Error fetching course details:', err);
+            document.getElementById('course-details').innerHTML = '<p class="text-red-600 text-center">Failed to load course details. Please try again.</p>';
         }
+    }
 
-        // Payment handling with OPay
-        const payButton = document.getElementById('pay-btn');
-        const userPhoneInput = document.getElementById('user-phone');
-        const bankCodeSelect = document.getElementById('bank-code');
-        const downloadPdfLink = document.getElementById('download-pdf');
-        const paymentMessage = document.getElementById('payment-message');
-        const errorMessage = document.getElementById('error-message');
+    // Payment handling with OPay
+    const payButton = document.getElementById('pay-btn');
+    const userPhoneInput = document.getElementById('user-phone');
+    const bankCodeSelect = document.getElementById('bank-code');
+    const downloadPdfLink = document.getElementById('download-pdf');
+    const paymentMessage = document.getElementById('payment-message');
+    const errorMessage = document.getElementById('error-message');
 
-        payButton.addEventListener('click', async () => {
+    payButton.addEventListener('click', async () => {
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const courseId = urlParams.get('courseId');
+            const userPhone = userPhoneInput.value.trim();
+            const bankCode = bankCodeSelect.value;
+
+            if (!userPhone) {
+                throw new Error('Please enter a valid phone number');
+            }
+            if (!bankCode) {
+                throw new Error('Please select a bank');
+            }
+
+            const response = await fetch(`https://learnhub-r94s.onrender.com/api/pay`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ courseId, userPhone, bankCode })
+            });
+            const result = await response.json();
+            if (!response.ok) {
+                throw new Error(result.error || 'Payment failed');
+            }
+            if (result.ussdCode) {
+                paymentMessage.textContent = `Please dial ${result.ussdCode} on your phone to complete the payment.`;
+                paymentMessage.classList.remove('hidden');
+                setTimeout(() => paymentMessage.classList.add('hidden'), 10000);
+                // Store reference for verification
+                localStorage.setItem('paymentReference', result.reference);
+            } else {
+                throw new Error('No USSD code received');
+            }
+        } catch (err) {
+            console.error('Error processing payment:', err);
+            errorMessage.textContent = err.message || 'Payment failed. Please try again.';
+            errorMessage.classList.remove('hidden');
+            setTimeout(() => errorMessage.classList.add('hidden'), 5000);
+        }
+    });
+
+    // Check payment status on page load (after user completes USSD payment)
+    window.addEventListener('load', async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('courseId');
+        const reference = localStorage.getItem('paymentReference'); // Retrieve stored reference
+        if (reference) {
             try {
-                const urlParams = new URLSearchParams(window.location.search);
-                const courseId = urlParams.get('courseId');
-                const userPhone = userPhoneInput.value.trim();
-                const bankCode = bankCodeSelect.value;
-
-                if (!userPhone) {
-                    throw new Error('Please enter a valid phone number');
-                }
-                if (!bankCode) {
-                    throw new Error('Please select a bank');
-                }
-
-                const response = await fetch(`http://localhost:3000/api/pay`, {
+                const response = await fetch(`https://learnhub-r94s.onrender.com/api/payment-callback`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ courseId, userPhone, bankCode })
+                    body: JSON.stringify({ reference, status: 'SUCCESS' }) // Mock status for client-side check
                 });
                 const result = await response.json();
-                if (!response.ok) {
-                    throw new Error(result.error || 'Payment failed');
-                }
-                if (result.ussdCode) {
-                    paymentMessage.textContent = `Please dial ${result.ussdCode} on your phone to complete the payment.`;
+                if (response.ok && result.message === 'Payment verified successfully') {
+                    paymentMessage.textContent = 'Payment successful! You can now download the syllabus.';
                     paymentMessage.classList.remove('hidden');
-                    setTimeout(() => paymentMessage.classList.add('hidden'), 10000);
-                    // Store reference for verification
-                    localStorage.setItem('paymentReference', result.reference);
+                    downloadPdfLink.href = `https://learnhub-r94s.onrender.com/api/courses/${courseId}/syllabus`;
+                    downloadPdfLink.classList.remove('hidden');
+                    payButton.classList.add('hidden');
+                    localStorage.removeItem('paymentReference'); // Clear reference after verification
+                    setTimeout(() => paymentMessage.classList.add('hidden'), 5000);
                 } else {
-                    throw new Error('No USSD code received');
+                    throw new Error(result.error || 'Payment verification failed');
                 }
             } catch (err) {
-                console.error('Error processing payment:', err);
-                errorMessage.textContent = err.message || 'Payment failed. Please try again.';
+                console.error('Error verifying payment:', err);
+                errorMessage.textContent = err.message || 'Payment verification failed. Please try again.';
                 errorMessage.classList.remove('hidden');
                 setTimeout(() => errorMessage.classList.add('hidden'), 5000);
             }
-        });
+        }
+    });
 
-        // Check payment status on page load (after user completes USSD payment)
-        window.addEventListener('load', async () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const courseId = urlParams.get('courseId');
-            const reference = localStorage.getItem('paymentReference'); // Retrieve stored reference
-            if (reference) {
-                try {
-                    const response = await fetch(`http://localhost:3000/api/payment-callback`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ reference, status: 'SUCCESS' }) // Mock status for client-side check
-                    });
-                    const result = await response.json();
-                    if (response.ok && result.message === 'Payment verified successfully') {
-                        paymentMessage.textContent = 'Payment successful! You can now download the syllabus.';
-                        paymentMessage.classList.remove('hidden');
-                        downloadPdfLink.href = `http://localhost:3000/api/courses/${courseId}/syllabus`;
-                        downloadPdfLink.classList.remove('hidden');
-                        payButton.classList.add('hidden');
-                        localStorage.removeItem('paymentReference'); // Clear reference after verification
-                        setTimeout(() => paymentMessage.classList.add('hidden'), 5000);
-                    } else {
-                        throw new Error(result.error || 'Payment verification failed');
-                    }
-                } catch (err) {
-                    console.error('Error verifying payment:', err);
-                    errorMessage.textContent = err.message || 'Payment verification failed. Please try again.';
-                    errorMessage.classList.remove('hidden');
-                    setTimeout(() => errorMessage.classList.add('hidden'), 5000);
-                }
-            }
-        });
+    // Bottom Navigation Toggle
+    const bottomNavToggle = document.getElementById('bottom-nav-toggle');
+    const bottomNav = document.querySelector('.bottom-nav');
+    bottomNavToggle.addEventListener('click', () => {
+        bottomNav.classList.toggle('hidden');
+    });
 
-        // Bottom Navigation Toggle
-        const bottomNavToggle = document.getElementById('bottom-nav-toggle');
-        const bottomNav = document.querySelector('.bottom-nav');
-        bottomNavToggle.addEventListener('click', () => {
-            bottomNav.classList.toggle('hidden');
-        });
+    // Search Bar Toggle
+    const searchButton = document.getElementById('search-toggle');
+    const searchInput = document.getElementById('search-input');
+    searchButton.addEventListener('click', () => {
+        searchInput.classList.toggle('hidden');
+        if (!searchInput.classList.contains('hidden')) {
+            searchInput.focus();
+        }
+    });
 
-        // Search Bar Toggle
-        const searchButton = document.getElementById('search-toggle');
-        const searchInput = document.getElementById('search-input');
-        searchButton.addEventListener('click', () => {
-            searchInput.classList.toggle('hidden');
-            if (!searchInput.classList.contains('hidden')) {
-                searchInput.focus();
-            }
-        });
+    // Search Redirect
+    searchInput.addEventListener('input', async () => {
+        const searchTerm = searchInput.value.toLowerCase();
+        if (searchTerm) {
+            window.location.href = `courses.html?q=${encodeURIComponent(searchTerm)}`;
+        }
+    });
 
-        // Search Redirect
-        searchInput.addEventListener('input', async () => {
-            const searchTerm = searchInput.value.toLowerCase();
-            if (searchTerm) {
-                window.location.href = `courses.html?q=${encodeURIComponent(searchTerm)}`;
-            }
-        });
+    // Keyboard Accessibility
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !bottomNav.classList.contains('hidden')) {
+            bottomNav.classList.add('hidden');
+        }
+        if (e.key === 'Escape' && !searchInput.classList.contains('hidden')) {
+            searchInput.classList.add('hidden');
+        }
+    });
 
-        // Keyboard Accessibility
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !bottomNav.classList.contains('hidden')) {
-                bottomNav.classList.add('hidden');
-            }
-            if (e.key === 'Escape' && !searchInput.classList.contains('hidden')) {
-                searchInput.classList.add('hidden');
-            }
-        });
-
-        // Initialize
-        fetchCourseDetails();
-        fetchFooterCategories();
-    </script>
+    // Initialize
+    fetchCourseDetails();
+    fetchFooterCategories();
+</script>
 </body>
 </html>
