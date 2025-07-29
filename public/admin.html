@@ -923,7 +923,8 @@
             if (window.innerWidth < 640) {
                 document.getElementById('sidebar').classList.remove('active');
             }
-        } haarfetched category for edit:', err);
+        } catch (err) {
+            console.error('Error fetching category for edit:', err);
             alert('Failed to load category data.');
         }
     }
