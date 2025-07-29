@@ -406,643 +406,641 @@
         </div>
     </nav>
 
-    <!-- JavaScript -->
     <script>
-        const API_URL = 'http://localhost:3000/api';
-        const ADMIN_PASSWORD = localStorage.getItem('adminPassword');
+    const API_URL = 'https://learnhub-r94s.onrender.com/api';
+    const ADMIN_PASSWORD = localStorage.getItem('adminPassword');
 
-        // Check if logged in
-        if (ADMIN_PASSWORD) {
-            document.getElementById('login-section').classList.add('hidden');
-            document.getElementById('dashboard-section').classList.remove('hidden');
-            fetchData();
+    // Check if logged in
+    if (ADMIN_PASSWORD) {
+        document.getElementById('login-section').classList.add('hidden');
+        document.getElementById('dashboard-section').classList.remove('hidden');
+        fetchData();
+    }
+
+    // Sidebar toggle for mobile
+    document.getElementById('sidebar-toggle').addEventListener('click', () => {
+        document.getElementById('sidebar').classList.toggle('active');
+    });
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', (e) => {
+        const sidebar = document.getElementById('sidebar');
+        const toggleButton = document.getElementById('sidebar-toggle');
+        if (!sidebar.contains(e.target) && !toggleButton.contains(e.target) && sidebar.classList.contains('active')) {
+            sidebar.classList.remove('active');
         }
+    });
 
-        // Sidebar toggle for mobile
-        document.getElementById('sidebar-toggle').addEventListener('click', () => {
-            document.getElementById('sidebar').classList.toggle('active');
-        });
-
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', (e) => {
-            const sidebar = document.getElementById('sidebar');
-            const toggleButton = document.getElementById('sidebar-toggle');
-            if (!sidebar.contains(e.target) && !toggleButton.contains(e.target) && sidebar.classList.contains('active')) {
-                sidebar.classList.remove('active');
+    // Login
+    document.getElementById('login-button').addEventListener('click', async () => {
+        const password = document.getElementById('password').value;
+        try {
+            const response = await fetch(`${API_URL}/admin/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password })
+            });
+            if (response.ok) {
+                localStorage.setItem('adminPassword', password);
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('dashboard-section').classList.remove('hidden');
+                fetchData();
+            } else {
+                const error = await response.json();
+                alert(error.error || 'Login failed');
             }
-        });
+        } catch (err) {
+            console.error('Error during login:', err);
+            alert('Login failed');
+        }
+    });
 
-        // Login
-        document.getElementById('login-button').addEventListener('click', async () => {
-            const password = document.getElementById('password').value;
-            try {
-                const response = await fetch(`${API_URL}/admin/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password })
-                });
-                if (response.ok) {
-                    localStorage.setItem('adminPassword', password);
-                    document.getElementById('login-section').classList.add('hidden');
-                    document.getElementById('dashboard-section').classList.remove('hidden');
-                    fetchData();
-                } else {
-                    const error = await response.json();
-                    alert(error.error || 'Login failed');
-                }
-            } catch (err) {
-                console.error('Error during login:', err);
-                alert('Login failed');
-            }
-        });
+    // Logout
+    document.getElementById('logout-button').addEventListener('click', () => {
+        localStorage.removeItem('adminPassword');
+        document.getElementById('login-section').classList.remove('hidden');
+        document.getElementById('dashboard-section').classList.add('hidden');
+        document.getElementById('add-button').classList.add('hidden');
+        document.getElementById('sidebar').classList.remove('active');
+    });
 
-        // Logout
-        document.getElementById('logout-button').addEventListener('click', () => {
-            localStorage.removeItem('adminPassword');
-            document.getElementById('login-section').classList.remove('hidden');
-            document.getElementById('dashboard-section').classList.add('hidden');
-            document.getElementById('add-button').classList.add('hidden');
-            document.getElementById('sidebar').classList.remove('active');
-        });
-
-        // Tab switching
-        const navButtons = document.querySelectorAll('.sidebar-button, .mobile-nav-button');
-        navButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                navButtons.forEach(btn => {
-                    btn.classList.remove('active');
-                    if (btn.classList.contains('sidebar-button')) {
-                        btn.classList.remove('bg-blue-600', 'text-white');
-                        btn.classList.add('text-gray-600');
-                    } else {
-                        btn.classList.remove('text-blue-600');
-                        btn.classList.add('text-gray-600');
-                    }
-                });
-                button.classList.add('active');
-                if (button.classList.contains('sidebar-button')) {
-                    button.classList.add('bg-blue-600', 'text-white');
-                    button.classList.remove('text-gray-600');
+    // Tab switching
+    const navButtons = document.querySelectorAll('.sidebar-button, .mobile-nav-button');
+    navButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            navButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.classList.contains('sidebar-button')) {
+                    btn.classList.remove('bg-blue-600', 'text-white');
+                    btn.classList.add('text-gray-600');
                 } else {
-                    button.classList.add('text-blue-600');
-                    button.classList.remove('text-gray-600');
-                }
-                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-                document.getElementById(`${button.dataset.tab}-tab`).classList.add('active');
-                // Show/hide add button
-                const addButton = document.getElementById('add-button');
-                if (button.dataset.tab === 'courses' || button.dataset.tab === 'categories') {
-                    addButton.classList.remove('hidden');
-                    addButton.dataset.modal = button.dataset.tab === 'courses' ? 'course-modal' : 'category-modal';
-                    addButton.setAttribute('aria-label', `Add new ${button.dataset.tab.slice(0, -1)}`);
-                } else {
-                    addButton.classList.add('hidden');
-                }
-                // Close sidebar on mobile after selection
-                if (window.innerWidth < 640) {
-                    document.getElementById('sidebar').classList.remove('active');
+                    btn.classList.remove('text-blue-600');
+                    btn.classList.add('text-gray-600');
                 }
             });
+            button.classList.add('active');
+            if (button.classList.contains('sidebar-button')) {
+                button.classList.add('bg-blue-600', 'text-white');
+                button.classList.remove('text-gray-600');
+            } else {
+                button.classList.add('text-blue-600');
+                button.classList.remove('text-gray-600');
+            }
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(`${button.dataset.tab}-tab`).classList.add('active');
+            // Show/hide add button
+            const addButton = document.getElementById('add-button');
+            if (button.dataset.tab === 'courses' || button.dataset.tab === 'categories') {
+                addButton.classList.remove('hidden');
+                addButton.dataset.modal = button.dataset.tab === 'courses' ? 'course-modal' : 'category-modal';
+                addButton.setAttribute('aria-label', `Add new ${button.dataset.tab.slice(0, -1)}`);
+            } else {
+                addButton.classList.add('hidden');
+            }
+            // Close sidebar on mobile after selection
+            if (window.innerWidth < 640) {
+                document.getElementById('sidebar').classList.remove('active');
+            }
         });
-        // Default to dashboard tab
-        document.querySelector('.sidebar-button[data-tab="dashboard"]').classList.add('active', 'bg-blue-600', 'text-white');
-        document.querySelector('.mobile-nav-button[data-tab="dashboard"]').classList.add('active', 'text-blue-600');
-        document.getElementById('dashboard-tab').classList.add('active');
+    });
+    // Default to dashboard tab
+    document.querySelector('.sidebar-button[data-tab="dashboard"]').classList.add('active', 'bg-blue-600', 'text-white');
+    document.querySelector('.mobile-nav-button[data-tab="dashboard"]').classList.add('active', 'text-blue-600');
+    document.getElementById('dashboard-tab').classList.add('active');
 
-        // Add button to open modal
-        document.getElementById('add-button').addEventListener('click', () => {
-            const modalId = document.getElementById('add-button').dataset.modal;
-            const modal = document.getElementById(modalId);
-            modal.classList.add('active');
-            modal.querySelector('input, select, textarea').focus();
+    // Add button to open modal
+    document.getElementById('add-button').addEventListener('click', () => {
+        const modalId = document.getElementById('add-button').dataset.modal;
+        const modal = document.getElementById(modalId);
+        modal.classList.add('active');
+        modal.querySelector('input, select, textarea').focus();
+    });
+
+    // Modal cancel buttons
+    document.getElementById('course-modal-cancel').addEventListener('click', () => {
+        document.getElementById('course-modal').classList.remove('active');
+        document.getElementById('course-form').reset();
+        document.getElementById('course-id').value = '';
+        document.getElementById('course-form-title').textContent = 'Add New Course';
+        document.getElementById('course-submit').textContent = 'Save Course';
+    });
+
+    document.getElementById('category-modal-cancel').addEventListener('click', () => {
+        document.getElementById('category-modal').classList.remove('active');
+        document.getElementById('category-form').reset();
+        document.getElementById('category-id').value = '';
+        document.getElementById('category-form-title').textContent = 'Add New Category';
+        document.getElementById('category-submit').textContent = 'Save Category';
+    });
+
+    // Click outside modal to close
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+                modal.querySelector('form').reset();
+                const formId = modal.id.replace('-modal', '-form');
+                document.getElementById(formId).querySelector('input[type="hidden"]').value = '';
+                document.getElementById(formId.replace('-form', '-form-title')).textContent = `Add New ${formId.split('-')[0].replace(/^\w/, c => c.toUpperCase())}`;
+                document.getElementById(formId.replace('-form', '-submit')).textContent = `Save ${formId.split('-')[0].replace(/^\w/, c => c.toUpperCase())}`;
+            }
         });
+    });
 
-        // Modal cancel buttons
-        document.getElementById('course-modal-cancel').addEventListener('click', () => {
-            document.getElementById('course-modal').classList.remove('active');
-            document.getElementById('course-form').reset();
-            document.getElementById('course-id').value = '';
-            document.getElementById('course-form-title').textContent = 'Add New Course';
-            document.getElementById('course-submit').textContent = 'Save Course';
-        });
+    // Fetch categories for course form dropdown
+    async function fetchCategoriesForDropdown() {
+        try {
+            const response = await fetch(`${API_URL}/categories`);
+            const categories = await response.json();
+            const select = document.getElementById('course-category');
+            select.innerHTML = categories.map(category => `
+                <option value="${category._id}">${category.title}</option>
+            `).join('');
+            return categories;
+        } catch (err) {
+            console.error('Error fetching categories for dropdown:', err);
+            return [];
+        }
+    }
 
-        document.getElementById('category-modal-cancel').addEventListener('click', () => {
-            document.getElementById('category-modal').classList.remove('active');
-            document.getElementById('category-form').reset();
-            document.getElementById('category-id').value = '';
-            document.getElementById('category-form-title').textContent = 'Add New Category';
-            document.getElementById('category-submit').textContent = 'Save Category';
-        });
+    // Fetch and render courses
+    async function fetchCourses() {
+        try {
+            const response = await fetch(`${API_URL}/courses`);
+            const courses = await response.json();
+            const courseTable = document.getElementById('course-table');
+            courseTable.innerHTML = courses.map(course => `
+                <tr>
+                    <td class="p-4 text-gray-700">${course.title}</td>
+                    <td class="p-4 text-gray-700">${course.category.title}</td>
+                    <td class="p-4 text-gray-700">${course.level}</td>
+                    <td class="p-4">
+                        <button class="edit-course bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700" data-id="${course._id}" aria-label="Edit ${course.title}">Edit</button>
+                        <button class="delete-course bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 ml-2" data-id="${course._id}" aria-label="Delete ${course.title}">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+            // Latest Course Update
+            const latestCourseDiv = document.getElementById('latest-course-update');
+            const latestCourseDashboard = document.getElementById('latest-course');
+            if (courses.length > 0) {
+                const latestCourse = courses.sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt))[0];
+                const updateText = `
+                    <p class="text-gray-700"><strong>Title:</strong> ${latestCourse.title}</p>
+                    <p class="text-gray-700"><strong>Category:</strong> ${latestCourse.category.title}</p>
+                    <p class="text-gray-700"><strong>Updated:</strong> ${new Date(latestCourse.updatedAt || latestCourse.createdAt).toLocaleString()}</p>
+                `;
+                latestCourseDiv.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Course Update</h4>${updateText}`;
+                latestCourseDashboard.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Course</h4>${updateText}`;
+            } else {
+                latestCourseDiv.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Course Update</h4><p class="text-gray-700">No courses available.</p>`;
+                latestCourseDashboard.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Course</h4><p class="text-gray-700">No courses available.</p>`;
+            }
+            // Add event listeners for edit and delete buttons
+            document.querySelectorAll('.edit-course').forEach(button => {
+                button.addEventListener('click', () => editCourse(button.dataset.id));
+            });
+            document.querySelectorAll('.delete-course').forEach(button => {
+                button.addEventListener('click', () => deleteCourse(button.dataset.id));
+            });
+            return courses;
+        } catch (err) {
+            console.error('Error fetching courses:', err);
+            document.getElementById('course-table').innerHTML = '<tr><td colspan="4" class="p-4 text-red-600 text-center">Failed to load courses.</td></tr>';
+            document.getElementById('latest-course-update').innerHTML = '<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Course Update</h4><p class="text-red-600">Failed to load courses.</p>';
+            document.getElementById('latest-course').innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Course</h4><p class="text-red-600">Failed to load courses.</p>`;
+            return [];
+        }
+    }
 
-        // Click outside modal to close
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.remove('active');
-                    modal.querySelector('form').reset();
-                    const formId = modal.id.replace('-modal', '-form');
-                    document.getElementById(formId).querySelector('input[type="hidden"]').value = '';
-                    document.getElementById(formId.replace('-form', '-form-title')).textContent = `Add New ${formId.split('-')[0].replace(/^\w/, c => c.toUpperCase())}`;
-                    document.getElementById(formId.replace('-form', '-submit')).textContent = `Save ${formId.split('-')[0].replace(/^\w/, c => c.toUpperCase())}`;
+    // Fetch and render categories
+    async function fetchCategories() {
+        try {
+            const response = await fetch(`${API_URL}/categories`);
+            const categories = await response.json();
+            const categoryTable = document.getElementById('category-table');
+            categoryTable.innerHTML = categories.map(category => `
+                <tr>
+                    <td class="p-4 text-gray-700">${category.title}</td>
+                    <td class="p-4 text-gray-700">${category.group}</td>
+                    <td class="p-4 text-gray-700">${category.courseCount}</td>
+                    <td class="p-4">
+                        <button class="edit-category bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700" data-id="${category._id}" aria-label="Edit ${category.title}">Edit</button>
+                        <button class="delete-category bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 ml-2" data-id="${category._id}" aria-label="Delete ${category.title}">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+            // Latest Category Update
+            const latestCategoryDiv = document.getElementById('latest-category-update');
+            const latestCategoryDashboard = document.getElementById('latest-category');
+            if (categories.length > 0) {
+                const latestCategory = categories.sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt))[0];
+                const updateText = `
+                    <p class="text-gray-700"><strong>Title:</strong> ${latestCategory.title}</p>
+                    <p class="text-gray-700"><strong>Group:</strong> ${latestCategory.group}</p>
+                    <p class="text-gray-700"><strong>Updated:</strong> ${new Date(latestCategory.updatedAt || latestCategory.createdAt).toLocaleString()}</p>
+                `;
+                latestCategoryDiv.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Category Update</h4>${updateText}`;
+                latestCategoryDashboard.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Category</h4>${updateText}`;
+            } else {
+                latestCategoryDiv.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Category Update</h4><p class="text-gray-700">No categories available.</p>`;
+                latestCategoryDashboard.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Category</h4><p class="text-gray-700">No categories available.</p>`;
+            }
+            // Add event listeners for edit and delete buttons
+            document.querySelectorAll('.edit-category').forEach(button => {
+                button.addEventListener('click', () => editCategory(button.dataset.id));
+            });
+            document.querySelectorAll('.delete-category').forEach(button => {
+                button.addEventListener('click', () => deleteCategory(button.dataset.id));
+            });
+            return categories;
+        } catch (err) {
+            console.error('Error fetching categories:', err);
+            document.getElementById('category-table').innerHTML = '<tr><td colspan="4" class="p-4 text-red-600 text-center">Failed to load categories.</td></tr>';
+            document.getElementById('latest-category-update').innerHTML = '<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Category Update</h4><p class="text-red-600">Failed to load categories.</p>';
+            document.getElementById('latest-category').innerHTML = '<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Category</h4><p class="text-red-600">Failed to load categories.</p>';
+            return [];
+        }
+    }
+
+    // Fetch and render messages
+    async function fetchMessages() {
+        try {
+            const response = await fetch(`${API_URL}/messages`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: ADMIN_PASSWORD })
+            });
+            const messages = await response.json();
+            const messageTable = document.getElementById('message-table');
+            messageTable.innerHTML = messages.map(message => `
+                <tr>
+                    <td class="p-4 text-gray-700">${message.name}</td>
+                    <td class="p-4 text-gray-700">${message.email}</td>
+                    <td class="p-4 text-gray-700">${message.subject}</td>
+                    <td class="p-4 text-gray-700">${message.message}</td>
+                    <td class="p-4 text-gray-700">${new Date(message.createdAt).toLocaleString()}</td>
+                </tr>
+            `).join('');
+            // Latest Message Update
+            const latestMessageDiv = document.getElementById('latest-message-update');
+            const latestMessageDashboard = document.getElementById('latest-message');
+            if (messages.length > 0) {
+                const latestMessage = messages.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+                const updateText = `
+                    <p class="text-gray-700"><strong>Name:</strong> ${latestMessage.name}</p>
+                    <p class="text-gray-700"><strong>Subject:</strong> ${latestMessage.subject}</p>
+                    <p class="text-gray-700"><strong>Received:</strong> ${new Date(latestMessage.createdAt).toLocaleString()}</p>
+                `;
+                latestMessageDiv.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Message</h4>${updateText}`;
+                latestMessageDashboard.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Message</h4>${updateText}`;
+            } else {
+                latestMessageDiv.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Message</h4><p class="text-gray-700">No messages available.</p>`;
+                latestMessageDashboard.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Message</h4><p class="text-gray-700">No messages available.</p>`;
+            }
+            return messages;
+        } catch (err) {
+            console.error('Error fetching messages:', err);
+            document.getElementById('message-table').innerHTML = '<tr><td colspan="5" class="p-4 text-red-600 text-center">Failed to load messages.</td></tr>';
+            document.getElementById('latest-message-update').innerHTML = '<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Message</h4><p class="text-red-600">Failed to load messages.</p>';
+            document.getElementById('latest-message').innerHTML = '<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Message</h4><p class="text-red-600">Failed to load messages.</p>';
+            return [];
+        }
+    }
+
+    // Fetch analytics data
+    async function fetchAnalytics() {
+        try {
+            const [courses, categories, messages, visitors] = await Promise.all([
+                fetchCourses(),
+                fetchCategories(),
+                fetchMessages(),
+                fetch(`${API_URL}/visitors`).then(res => res.json())
+            ]);
+
+            // Total Visitors
+            document.getElementById('total-visitors').textContent = visitors.count || 0;
+
+            // Courses by Category
+            const techCourses = categories.filter(c => c.group === 'technology').reduce((sum, c) => sum + c.courseCount, 0);
+            const businessCourses = categories.filter(c => c.group === 'business').reduce((sum, c) => sum + c.courseCount, 0);
+            const creativeCourses = categories.filter(c => c.group === 'creative').reduce((sum, c) => sum + c.courseCount, 0);
+            document.getElementById('tech-courses').textContent = techCourses;
+            document.getElementById('business-courses').textContent = businessCourses;
+            document.getElementById('creative-courses').textContent = creativeCourses;
+
+            // Top-Rated Courses
+            const topCourses = courses
+                .filter(course => course.reviews >= 10)
+                .sort((a, b) => b.rating - a.rating)
+                .slice(0, 3);
+            const topRatedDiv = document.getElementById('top-rated-courses');
+            if (topCourses.length > 0) {
+                topRatedDiv.innerHTML = topCourses.map(course => `
+                    <p class="text-gray-700">${course.title} (${course.rating}/5, ${course.reviews} reviews)</p>
+                `).join('');
+            } else {
+                topRatedDiv.innerHTML = '<p class="text-gray-700">No top-rated courses available.</p>';
+            }
+
+            // Messages per Day (Last 7 Days)
+            const today = new Date('2025-07-11T00:00:00+01:00');
+            const sevenDaysAgo = new Date(today);
+            sevenDaysAgo.setDate(today.getDate() - 6);
+            const messageCounts = Array(7).fill(0);
+            const labels = Array(7).fill('').map((_, i) => {
+                const date = new Date(sevenDaysAgo);
+                date.setDate(sevenDaysAgo.getDate() + i);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            });
+            messages.forEach(msg => {
+                const msgDate = new Date(msg.createdAt);
+                if (msgDate >= sevenDaysAgo && msgDate <= today) {
+                    const dayIndex = Math.floor((msgDate - sevenDaysAgo) / (1000 * 60 * 60 * 24));
+                    if (dayIndex >= 0 && dayIndex < 7) {
+                        messageCounts[dayIndex]++;
+                    }
                 }
             });
-        });
 
-        // Fetch categories for course form dropdown
-        async function fetchCategoriesForDropdown() {
-            try {
-                const response = await fetch(`${API_URL}/categories`);
-                const categories = await response.json();
-                const select = document.getElementById('course-category');
-                select.innerHTML = categories.map(category => `
-                    <option value="${category._id}">${category.title}</option>
-                `).join('');
-                return categories;
-            } catch (err) {
-                console.error('Error fetching categories for dropdown:', err);
-                return [];
-            }
-        }
-
-        // Fetch and render courses
-        async function fetchCourses() {
-            try {
-                const response = await fetch(`${API_URL}/courses`);
-                const courses = await response.json();
-                const courseTable = document.getElementById('course-table');
-                courseTable.innerHTML = courses.map(course => `
-                    <tr>
-                        <td class="p-4 text-gray-700">${course.title}</td>
-                        <td class="p-4 text-gray-700">${course.category.title}</td>
-                        <td class="p-4 text-gray-700">${course.level}</td>
-                        <td class="p-4">
-                            <button class="edit-course bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700" data-id="${course._id}" aria-label="Edit ${course.title}">Edit</button>
-                            <button class="delete-course bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 ml-2" data-id="${course._id}" aria-label="Delete ${course.title}">Delete</button>
-                        </td>
-                    </tr>
-                `).join('');
-                // Latest Course Update
-                const latestCourseDiv = document.getElementById('latest-course-update');
-                const latestCourseDashboard = document.getElementById('latest-course');
-                if (courses.length > 0) {
-                    const latestCourse = courses.sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt))[0];
-                    const updateText = `
-                        <p class="text-gray-700"><strong>Title:</strong> ${latestCourse.title}</p>
-                        <p class="text-gray-700"><strong>Category:</strong> ${latestCourse.category.title}</p>
-                        <p class="text-gray-700"><strong>Updated:</strong> ${new Date(latestCourse.updatedAt || latestCourse.createdAt).toLocaleString()}</p>
-                    `;
-                    latestCourseDiv.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Course Update</h4>${updateText}`;
-                    latestCourseDashboard.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Course</h4>${updateText}`;
-                } else {
-                    latestCourseDiv.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Course Update</h4><p class="text-gray-700">No courses available.</p>`;
-                    latestCourseDashboard.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Course</h4><p class="text-gray-700">No courses available.</p>`;
-                }
-                // Add event listeners for edit and delete buttons
-                document.querySelectorAll('.edit-course').forEach(button => {
-                    button.addEventListener('click', () => editCourse(button.dataset.id));
-                });
-                document.querySelectorAll('.delete-course').forEach(button => {
-                    button.addEventListener('click', () => deleteCourse(button.dataset.id));
-                });
-                return courses;
-            } catch (err) {
-                console.error('Error fetching courses:', err);
-                document.getElementById('course-table').innerHTML = '<tr><td colspan="4" class="p-4 text-red-600 text-center">Failed to load courses.</td></tr>';
-                document.getElementById('latest-course-update').innerHTML = '<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Course Update</h4><p class="text-red-600">Failed to load courses.</p>';
-                document.getElementById('latest-course').innerHTML = '<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Course</h4><p class="text-red-600">Failed to load courses.</p>';
-                return [];
-            }
-        }
-
-        // Fetch and render categories
-        async function fetchCategories() {
-            try {
-                const response = await fetch(`${API_URL}/categories`);
-                const categories = await response.json();
-                const categoryTable = document.getElementById('category-table');
-                categoryTable.innerHTML = categories.map(category => `
-                    <tr>
-                        <td class="p-4 text-gray-700">${category.title}</td>
-                        <td class="p-4 text-gray-700">${category.group}</td>
-                        <td class="p-4 text-gray-700">${category.courseCount}</td>
-                        <td class="p-4">
-                            <button class="edit-category bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700" data-id="${category._id}" aria-label="Edit ${category.title}">Edit</button>
-                            <button class="delete-category bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 ml-2" data-id="${category._id}" aria-label="Delete ${category.title}">Delete</button>
-                        </td>
-                    </tr>
-                `).join('');
-                // Latest Category Update
-                const latestCategoryDiv = document.getElementById('latest-category-update');
-                const latestCategoryDashboard = document.getElementById('latest-category');
-                if (categories.length > 0) {
-                    const latestCategory = categories.sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt))[0];
-                    const updateText = `
-                        <p class="text-gray-700"><strong>Title:</strong> ${latestCategory.title}</p>
-                        <p class="text-gray-700"><strong>Group:</strong> ${latestCategory.group}</p>
-                        <p class="text-gray-700"><strong>Updated:</strong> ${new Date(latestCategory.updatedAt || latestCategory.createdAt).toLocaleString()}</p>
-                    `;
-                    latestCategoryDiv.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Category Update</h4>${updateText}`;
-                    latestCategoryDashboard.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Category</h4>${updateText}`;
-                } else {
-                    latestCategoryDiv.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Category Update</h4><p class="text-gray-700">No categories available.</p>`;
-                    latestCategoryDashboard.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Category</h4><p class="text-gray-700">No categories available.</p>`;
-                }
-                // Add event listeners for edit and delete buttons
-                document.querySelectorAll('.edit-category').forEach(button => {
-                    button.addEventListener('click', () => editCategory(button.dataset.id));
-                });
-                document.querySelectorAll('.delete-category').forEach(button => {
-                    button.addEventListener('click', () => deleteCategory(button.dataset.id));
-                });
-                return categories;
-            } catch (err) {
-                console.error('Error fetching categories:', err);
-                document.getElementById('category-table').innerHTML = '<tr><td colspan="4" class="p-4 text-red-600 text-center">Failed to load categories.</td></tr>';
-                document.getElementById('latest-category-update').innerHTML = '<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Category Update</h4><p class="text-red-600">Failed to load categories.</p>';
-                document.getElementById('latest-category').innerHTML = '<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Category</h4><p class="text-red-600">Failed to load categories.</p>';
-                return [];
-            }
-        }
-
-        // Fetch and render messages
-        async function fetchMessages() {
-            try {
-                const response = await fetch(`${API_URL}/messages`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password: ADMIN_PASSWORD })
-                });
-                const messages = await response.json();
-                const messageTable = document.getElementById('message-table');
-                messageTable.innerHTML = messages.map(message => `
-                    <tr>
-                        <td class="p-4 text-gray-700">${message.name}</td>
-                        <td class="p-4 text-gray-700">${message.email}</td>
-                        <td class="p-4 text-gray-700">${message.subject}</td>
-                        <td class="p-4 text-gray-700">${message.message}</td>
-                        <td class="p-4 text-gray-700">${new Date(message.createdAt).toLocaleString()}</td>
-                    </tr>
-                `).join('');
-                // Latest Message Update
-                const latestMessageDiv = document.getElementById('latest-message-update');
-                const latestMessageDashboard = document.getElementById('latest-message');
-                if (messages.length > 0) {
-                    const latestMessage = messages.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
-                    const updateText = `
-                        <p class="text-gray-700"><strong>Name:</strong> ${latestMessage.name}</p>
-                        <p class="text-gray-700"><strong>Subject:</strong> ${latestMessage.subject}</p>
-                        <p class="text-gray-700"><strong>Received:</strong> ${new Date(latestMessage.createdAt).toLocaleString()}</p>
-                    `;
-                    latestMessageDiv.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Message</h4>${updateText}`;
-                    latestMessageDashboard.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Message</h4>${updateText}`;
-                } else {
-                    latestMessageDiv.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Message</h4><p class="text-gray-700">No messages available.</p>`;
-                    latestMessageDashboard.innerHTML = `<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Message</h4><p class="text-gray-700">No messages available.</p>`;
-                }
-                return messages;
-            } catch (err) {
-                console.error('Error fetching messages:', err);
-                document.getElementById('message-table').innerHTML = '<tr><td colspan="5" class="p-4 text-red-600 text-center">Failed to load messages.</td></tr>';
-                document.getElementById('latest-message-update').innerHTML = '<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Message</h4><p class="text-red-600">Failed to load messages.</p>';
-                document.getElementById('latest-message').innerHTML = '<h4 class="text-lg font-semibold text-gray-800 mb-2">Latest Message</h4><p class="text-red-600">Failed to load messages.</p>';
-                return [];
-            }
-        }
-
-        // Fetch analytics data
-        async function fetchAnalytics() {
-            try {
-                const [courses, categories, messages, visitors] = await Promise.all([
-                    fetchCourses(),
-                    fetchCategories(),
-                    fetchMessages(),
-                    fetch(`${API_URL}/visitors`).then(res => res.json())
-                ]);
-
-                // Total Visitors
-                document.getElementById('total-visitors').textContent = visitors.count || 0;
-
-                // Courses by Category
-                const techCourses = categories.filter(c => c.group === 'technology').reduce((sum, c) => sum + c.courseCount, 0);
-                const businessCourses = categories.filter(c => c.group === 'business').reduce((sum, c) => sum + c.courseCount, 0);
-                const creativeCourses = categories.filter(c => c.group === 'creative').reduce((sum, c) => sum + c.courseCount, 0);
-                document.getElementById('tech-courses').textContent = techCourses;
-                document.getElementById('business-courses').textContent = businessCourses;
-                document.getElementById('creative-courses').textContent = creativeCourses;
-
-                // Top-Rated Courses
-                const topCourses = courses
-                    .filter(course => course.reviews >= 10)
-                    .sort((a, b) => b.rating - a.rating)
-                    .slice(0, 3);
-                const topRatedDiv = document.getElementById('top-rated-courses');
-                if (topCourses.length > 0) {
-                    topRatedDiv.innerHTML = topCourses.map(course => `
-                        <p class="text-gray-700">${course.title} (${course.rating}/5, ${course.reviews} reviews)</p>
-                    `).join('');
-                } else {
-                    topRatedDiv.innerHTML = '<p class="text-gray-700">No top-rated courses available.</p>';
-                }
-
-                // Messages per Day (Last 7 Days)
-                const today = new Date('2025-07-11T00:00:00+01:00');
-                const sevenDaysAgo = new Date(today);
-                sevenDaysAgo.setDate(today.getDate() - 6);
-                const messageCounts = Array(7).fill(0);
-                const labels = Array(7).fill('').map((_, i) => {
-                    const date = new Date(sevenDaysAgo);
-                    date.setDate(sevenDaysAgo.getDate() + i);
-                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                });
-                messages.forEach(msg => {
-                    const msgDate = new Date(msg.createdAt);
-                    if (msgDate >= sevenDaysAgo && msgDate <= today) {
-                        const dayIndex = Math.floor((msgDate - sevenDaysAgo) / (1000 * 60 * 60 * 24));
-                        if (dayIndex >= 0 && dayIndex < 7) {
-                            messageCounts[dayIndex]++;
-                        }
-                    }
-                });
-
-                // Render Chart
-                const ctx = document.getElementById('messages-chart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Messages',
-                            data: messageCounts,
-                            backgroundColor: '#4A90E2',
-                            borderColor: '#4A90E2',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: { display: true, text: 'Message Count' }
-                            },
-                            x: {
-                                title: { display: true, text: 'Date' }
-                            }
+            // Render Chart
+            const ctx = document.getElementById('messages-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Messages',
+                        data: messageCounts,
+                        backgroundColor: '#4A90E2',
+                        borderColor: '#4A90E2',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Message Count' }
                         },
-                        plugins: {
-                            legend: { display: false }
+                        x: {
+                            title: { display: true, text: 'Date' }
                         }
+                    },
+                    plugins: {
+                        legend: { display: false }
                     }
-                });
-
-                // Total Courses and Categories
-                document.getElementById('total-courses').textContent = courses.length;
-                document.getElementById('total-categories').textContent = categories.length;
-
-                // New Messages Today
-                const tomorrow = new Date('2025-07-12T00:00:00+01:00');
-                const newMessages = messages.filter(msg => {
-                    const msgDate = new Date(msg.createdAt);
-                    return msgDate >= today && msgDate < tomorrow;
-                });
-                document.getElementById('new-messages').textContent = newMessages.length;
-            } catch (err) {
-                console.error('Error fetching analytics:', err);
-                document.getElementById('total-visitors').textContent = 'Error';
-                document.getElementById('total-courses').textContent = 'Error';
-                document.getElementById('total-categories').textContent = 'Error';
-                document.getElementById('new-messages').textContent = 'Error';
-                document.getElementById('courses-by-category').innerHTML = '<p class="text-red-600">Failed to load analytics.</p>';
-                document.getElementById('top-rated-courses').innerHTML = '<p class="text-red-600">Failed to load top-rated courses.</p>';
-            }
-        }
-
-        // Edit course
-        async function editCourse(id) {
-            try {
-                const response = await fetch(`${API_URL}/courses/${id}`);
-                const course = await response.json();
-                document.getElementById('course-id').value = course._id;
-                document.getElementById('course-title').value = course.title;
-                document.getElementById('course-description').value = course.description;
-                document.getElementById('course-category').value = course.category._id;
-                document.getElementById('course-level').value = course.level;
-                document.getElementById('course-image').value = course.image;
-                document.getElementById('course-rating').value = course.rating;
-                document.getElementById('course-reviews').value = course.reviews;
-                document.getElementById('course-lectures').value = course.lectures;
-                document.getElementById('course-bestseller').checked = course.isBestseller;
-                document.getElementById('course-form-title').textContent = 'Edit Course';
-                document.getElementById('course-submit').textContent = 'Update Course';
-                document.getElementById('course-modal').classList.add('active');
-                document.getElementById('course-title').focus();
-                // Switch to Courses tab
-                navButtons.forEach(btn => {
-                    btn.classList.remove('active');
-                    if (btn.classList.contains('sidebar-button')) {
-                        btn.classList.remove('bg-blue-600', 'text-white');
-                        btn.classList.add('text-gray-600');
-                    } else {
-                        btn.classList.remove('text-blue-600');
-                        btn.classList.add('text-gray-600');
-                    }
-                });
-                const courseButton = document.querySelector('.sidebar-button[data-tab="courses"]');
-                const mobileCourseButton = document.querySelector('.mobile-nav-button[data-tab="courses"]');
-                courseButton.classList.add('active', 'bg-blue-600', 'text-white');
-                mobileCourseButton.classList.add('active', 'text-blue-600');
-                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-                document.getElementById('courses-tab').classList.add('active');
-                document.getElementById('add-button').classList.remove('hidden');
-                document.getElementById('add-button').dataset.modal = 'course-modal';
-                document.getElementById('add-button').setAttribute('aria-label', 'Add new course');
-                if (window.innerWidth < 640) {
-                    document.getElementById('sidebar').classList.remove('active');
                 }
-            } catch (err) {
-                console.error('Error fetching course for edit:', err);
-                alert('Failed to load course data.');
-            }
-        }
+            });
 
-        // Delete course
-        async function deleteCourse(id) {
-            if (!confirm('Are you sure you want to delete this course?')) return;
-            try {
-                const response = await fetch(`${API_URL}/courses/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password: ADMIN_PASSWORD })
-                });
-                if (response.ok) {
-                    alert('Course deleted successfully');
-                    fetchCourses();
-                    fetchAnalytics();
+            // Total Courses and Categories
+            document.getElementById('total-courses').textContent = courses.length;
+            document.getElementById('total-categories').textContent = categories.length;
+
+            // New Messages Today
+            const tomorrow = new Date('2025-07-12T00:00:00+01:00');
+            const newMessages = messages.filter(msg => {
+                const msgDate = new Date(msg.createdAt);
+                return msgDate >= today && msgDate < tomorrow;
+            });
+            document.getElementById('new-messages').textContent = newMessages.length;
+        } catch (err) {
+            console.error('Error fetching analytics:', err);
+            document.getElementById('total-visitors').textContent = 'Error';
+            document.getElementById('total-courses').textContent = 'Error';
+            document.getElementById('total-categories').textContent = 'Error';
+            document.getElementById('new-messages').textContent = 'Error';
+            document.getElementById('courses-by-category').innerHTML = '<p class="text-red-600">Failed to load analytics.</p>';
+            document.getElementById('top-rated-courses').innerHTML = '<p class="text-red-600">Failed to load top-rated courses.</p>';
+        }
+    }
+
+    // Edit course
+    async function editCourse(id) {
+        try {
+            const response = await fetch(`${API_URL}/courses/${id}`);
+            const course = await response.json();
+            document.getElementById('course-id').value = course._id;
+            document.getElementById('course-title').value = course.title;
+            document.getElementById('course-description').value = course.description;
+            document.getElementById('course-category').value = course.category._id;
+            document.getElementById('course-level').value = course.level;
+            document.getElementById('course-image').value = course.image;
+            document.getElementById('course-rating').value = course.rating;
+            document.getElementById('course-reviews').value = course.reviews;
+            document.getElementById('course-lectures').value = course.lectures;
+            document.getElementById('course-bestseller').checked = course.isBestseller;
+            document.getElementById('course-form-title').textContent = 'Edit Course';
+            document.getElementById('course-submit').textContent = 'Update Course';
+            document.getElementById('course-modal').classList.add('active');
+            document.getElementById('course-title').focus();
+            // Switch to Courses tab
+            navButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.classList.contains('sidebar-button')) {
+                    btn.classList.remove('bg-blue-600', 'text-white');
+                    btn.classList.add('text-gray-600');
                 } else {
-                    throw new Error('Failed to delete course');
+                    btn.classList.remove('text-blue-600');
+                    btn.classList.add('text-gray-600');
                 }
-            } catch (err) {
-                console.error('Error deleting course:', err);
-                alert('Failed to delete course.');
+            });
+            const courseButton = document.querySelector('.sidebar-button[data-tab="courses"]');
+            const mobileCourseButton = document.querySelector('.mobile-nav-button[data-tab="courses"]');
+            courseButton.classList.add('active', 'bg-blue-600', 'text-white');
+            mobileCourseButton.classList.add('active', 'text-blue-600');
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById('courses-tab').classList.add('active');
+            document.getElementById('add-button').classList.remove('hidden');
+            document.getElementById('add-button').dataset.modal = 'course-modal';
+            document.getElementById('add-button').setAttribute('aria-label', 'Add new course');
+            if (window.innerWidth < 640) {
+                document.getElementById('sidebar').classList.remove('active');
             }
+        } catch (err) {
+            console.error('Error fetching course for edit:', err);
+            alert('Failed to load course data.');
         }
+    }
 
-        // Edit category
-        async function editCategory(id) {
-            try {
-                const response = await fetch(`${API_URL}/categories/${id}`);
-                const category = await response.json();
-                document.getElementById('category-id').value = category._id;
-                document.getElementById('category-title').value = category.title;
-                document.getElementById('category-description').value = category.description;
-                document.getElementById('category-group').value = category.group;
-                document.getElementById('category-icon').value = category.icon;
-                document.getElementById('category-popularity').value = category.popularity;
-                document.getElementById('category-form-title').textContent = 'Edit Category';
-                document.getElementById('category-submit').textContent = 'Update Category';
-                document.getElementById('category-modal').classList.add('active');
-                document.getElementById('category-title').focus();
-                // Switch to Categories tab
-                navButtons.forEach(btn => {
-                    btn.classList.remove('active');
-                    if (btn.classList.contains('sidebar-button')) {
-                        btn.classList.remove('bg-blue-600', 'text-white');
-                        btn.classList.add('text-gray-600');
-                    } else {
-                        btn.classList.remove('text-blue-600');
-                        btn.classList.add('text-gray-600');
-                    }
-                });
-                const categoryButton = document.querySelector('.sidebar-button[data-tab="categories"]');
-                const mobileCategoryButton = document.querySelector('.mobile-nav-button[data-tab="categories"]');
-                categoryButton.classList.add('active', 'bg-blue-600', 'text-white');
-                mobileCategoryButton.classList.add('active', 'text-blue-600');
-                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-                document.getElementById('categories-tab').classList.add('active');
-                document.getElementById('add-button').classList.remove('hidden');
-                document.getElementById('add-button').dataset.modal = 'category-modal';
-                document.getElementById('add-button').setAttribute('aria-label', 'Add new category');
-                if (window.innerWidth < 640) {
-                    document.getElementById('sidebar').classList.remove('active');
-                }
-            } catch (err) {
-                console.error('Error fetching category for edit:', err);
-                alert('Failed to load category data.');
+    // Delete course
+    async function deleteCourse(id) {
+        if (!confirm('Are you sure you want to delete this course?')) return;
+        try {
+            const response = await fetch(`${API_URL}/courses/${id}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: ADMIN_PASSWORD })
+            });
+            if (response.ok) {
+                alert('Course deleted successfully');
+                fetchCourses();
+                fetchAnalytics();
+            } else {
+                throw new Error('Failed to delete course');
             }
+        } catch (err) {
+            console.error('Error deleting course:', err);
+            alert('Failed to delete course.');
         }
+    }
 
-        // Delete category
-        async function deleteCategory(id) {
-            if (!confirm('Are you sure you want to delete this category?')) return;
-            try {
-                const response = await fetch(`${API_URL}/categories/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password: ADMIN_PASSWORD })
-                });
-                if (response.ok) {
-                    alert('Category deleted successfully');
-                    fetchCategories();
-                    fetchCategoriesForDropdown();
-                    fetchAnalytics();
+    // Edit category
+    async function editCategory(id) {
+        try {
+            const response = await fetch(`${API_URL}/categories/${id}`);
+            const category = await response.json();
+            document.getElementById('category-id').value = category._id;
+            document.getElementById('category-title').value = category.title;
+            document.getElementById('category-description').value = category.description;
+            document.getElementById('category-group').value = category.group;
+            document.getElementById('category-icon').value = category.icon;
+            document.getElementById('category-popularity').value = category.popularity;
+            document.getElementById('category-form-title').textContent = 'Edit Category';
+            document.getElementById('category-submit').textContent = 'Update Category';
+            document.getElementById('category-modal').classList.add('active');
+            document.getElementById('category-title').focus();
+            // Switch to Categories tab
+            navButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.classList.contains('sidebar-button')) {
+                    btn.classList.remove('bg-blue-600', 'text-white');
+                    btn.classList.add('text-gray-600');
                 } else {
-                    const error = await response.json();
-                    throw new Error(error.error || 'Failed to delete category');
+                    btn.classList.remove('text-blue-600');
+                    btn.classList.add('text-gray-600');
                 }
-            } catch (err) {
-                console.error('Error deleting category:', err);
-                alert(err.message);
+            });
+            const categoryButton = document.querySelector('.sidebar-button[data-tab="categories"]');
+            const mobileCategoryButton = document.querySelector('.mobile-nav-button[data-tab="categories"]');
+            categoryButton.classList.add('active', 'bg-blue-600', 'text-white');
+            mobileCategoryButton.classList.add('active', 'text-blue-600');
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById('categories-tab').classList.add('active');
+            document.getElementById('add-button').classList.remove('hidden');
+            document.getElementById('add-button').dataset.modal = 'category-modal';
+            document.getElementById('add-button').setAttribute('aria-label', 'Add new category');
+            if (window.innerWidth < 640) {
+                document.getElementById('sidebar').classList.remove('active');
             }
+        } haarfetched category for edit:', err);
+            alert('Failed to load category data.');
         }
+    }
 
-        // Course form submission
-        document.getElementById('course-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('course-id').value;
-            const data = {
-                password: ADMIN_PASSWORD,
-                title: document.getElementById('course-title').value,
-                description: document.getElementById('course-description').value,
-                category: document.getElementById('course-category').value,
-                level: document.getElementById('course-level').value,
-                image: document.getElementById('course-image').value,
-                rating: document.getElementById('course-rating').value,
-                reviews: document.getElementById('course-reviews').value,
-                lectures: document.getElementById('course-lectures').value,
-                isBestseller: document.getElementById('course-bestseller').checked
-            };
-            try {
-                const method = id ? 'PUT' : 'POST';
-                const url = id ? `${API_URL}/courses/${id}` : `${API_URL}/courses`;
-                const response = await fetch(url, {
-                    method,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                if (response.ok) {
-                    alert(id ? 'Course updated successfully' : 'Course created successfully');
-                    document.getElementById('course-form').reset();
-                    document.getElementById('course-id').value = '';
-                    document.getElementById('course-form-title').textContent = 'Add New Course';
-                    document.getElementById('course-submit').textContent = 'Save Course';
-                    document.getElementById('course-modal').classList.remove('active');
-                    fetchCourses();
-                    fetchAnalytics();
-                } else {
-                    throw new Error('Failed to save course');
-                }
-            } catch (err) {
-                console.error('Error saving course:', err);
-                alert('Failed to save course.');
+    // Delete category
+    async function deleteCategory(id) {
+        if (!confirm('Are you sure you want to delete this category?')) return;
+        try {
+            const response = await fetch(`${API_URL}/categories/${id}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: ADMIN_PASSWORD })
+            });
+            if (response.ok) {
+                alert('Category deleted successfully');
+                fetchCategories();
+                fetchCategoriesForDropdown();
+                fetchAnalytics();
+            } else {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to delete category');
             }
-        });
-
-        // Category form submission
-        document.getElementById('category-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('category-id').value;
-            const data = {
-                password: ADMIN_PASSWORD,
-                title: document.getElementById('category-title').value,
-                description: document.getElementById('category-description').value,
-                group: document.getElementById('category-group').value,
-                icon: document.getElementById('category-icon').value,
-                popularity: document.getElementById('category-popularity').value
-            };
-            try {
-                const method = id ? 'PUT' : 'POST';
-                const url = id ? `${API_URL}/categories/${id}` : `${API_URL}/categories`;
-                const response = await fetch(url, {
-                    method,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                if (response.ok) {
-                    alert(id ? 'Category updated successfully' : 'Category created successfully');
-                    document.getElementById('category-form').reset();
-                    document.getElementById('category-id').value = '';
-                    document.getElementById('category-form-title').textContent = 'Add New Category';
-                    document.getElementById('category-submit').textContent = 'Save Category';
-                    document.getElementById('category-modal').classList.remove('active');
-                    fetchCategories();
-                    fetchCategoriesForDropdown();
-                    fetchAnalytics();
-                } else {
-                    throw new Error('Failed to save category');
-                }
-            } catch (err) {
-                console.error('Error saving category:', err);
-                alert('Failed to save category.');
-            }
-        });
-
-        // Fetch initial data
-        async function fetchData() {
-            await fetchCategoriesForDropdown();
-            await fetchAnalytics();
-            await fetchCourses();
-            await fetchCategories();
-            await fetchMessages();
+        } catch (err) {
+            console.error('Error deleting category:', err);
+            alert(err.message);
         }
-    </script>
+    }
+
+    // Course form submission
+    document.getElementById('course-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('course-id').value;
+        const data = {
+            password: ADMIN_PASSWORD,
+            title: document.getElementById('course-title').value,
+            description: document.getElementById('course-description').value,
+            category: document.getElementById('course-category').value,
+            level: document.getElementById('course-level').value,
+            image: document.getElementById('course-image').value,
+            rating: document.getElementById('course-rating').value,
+            reviews: document.getElementById('course-reviews').value,
+            lectures: document.getElementById('course-lectures').value,
+            isBestseller: document.getElementById('course-bestseller').checked
+        };
+        try {
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `${API_URL}/courses/${id}` : `${API_URL}/courses`;
+            const response = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (response.ok) {
+                alert(id ? 'Course updated successfully' : 'Course created successfully');
+                document.getElementById('course-form').reset();
+                document.getElementById('course-id').value = '';
+                document.getElementById('course-form-title').textContent = 'Add New Course';
+                document.getElementById('course-submit').textContent = 'Save Course';
+                document.getElementById('course-modal').classList.remove('active');
+                fetchCourses();
+                fetchAnalytics();
+            } else {
+                throw new Error('Failed to save course');
+            }
+        } catch (err) {
+            console.error('Error saving course:', err);
+            alert('Failed to save course.');
+        }
+    });
+
+    // Category form submission
+    document.getElementById('category-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('category-id').value;
+        const data = {
+            password: ADMIN_PASSWORD,
+            title: document.getElementById('category-title').value,
+            description: document.getElementById('category-description').value,
+            group: document.getElementById('category-group').value,
+            icon: document.getElementById('category-icon').value,
+            popularity: document.getElementById('category-popularity').value
+        };
+        try {
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `${API_URL}/categories/${id}` : `${API_URL}/categories`;
+            const response = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (response.ok) {
+                alert(id ? 'Category updated successfully' : 'Category created successfully');
+                document.getElementById('category-form').reset();
+                document.getElementById('category-id').value = '';
+                document.getElementById('category-form-title').textContent = 'Add New Category';
+                document.getElementById('category-submit').textContent = 'Save Category';
+                document.getElementById('category-modal').classList.remove('active');
+                fetchCategories();
+                fetchCategoriesForDropdown();
+                fetchAnalytics();
+            } else {
+                throw new Error('Failed to save category');
+            }
+        } catch (err) {
+            console.error('Error saving category:', err);
+            alert('Failed to save category.');
+        }
+    });
+
+    // Fetch initial data
+    async function fetchData() {
+        await fetchCategoriesForDropdown();
+        await fetchAnalytics();
+        await fetchCourses();
+        await fetchCategories();
+        await fetchMessages();
+    }
+</script>
 </body>
-</html>5
+</html>
