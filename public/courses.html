@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnHub - Courses</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .course-card:hover .course-actions {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .course-actions {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .filter-button {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .filter-button.active {
+            background-color: #4A90E2;
+            color: white;
+        }
+        .bottom-nav {
+            transition: transform 0.3s ease-in-out;
+        }
+        .bottom-nav.hidden {
+            transform: translateY(100%);
+        }
+        a:focus, button:focus, input:focus, select:focus {
+            outline: 2px solid #4A90E2;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header/Navigation -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <a href="index.html" class="text-2xl font-bold text-blue-600 flex items-center" aria-label="LearnHub Home">
+                    <i class="fas fa-graduation-cap mr-2"></i>
+                    LearnHub
+                </a>
+            </div>
+            <nav class="hidden md:flex space-x-8" aria-label="Main navigation">
+                <a href="index.html" class="text-gray-700 hover:text-blue-600 font-medium">Home</a>
+                <a href="courses.html" class="text-blue-600 font-medium border-b-2 border-blue-600">Courses</a>
+                <a href="categories.html" class="text-gray-700 hover:text-blue-600 font-medium">Categories</a>
+                <a href="contact.html" class="text-gray-700 hover:text-blue-600 font-medium">Contact</a>
+            </nav>
+            <div class="flex items-center space-x-4">
+                <button class="p-2 text-gray-600 hover:text-blue-600" aria-label="Search courses" id="search-toggle">
+                    <i class="fas fa-search"></i>
+                </button>
+                <div class="relative">
+                    <input type="search" id="search-input" class="hidden p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Search courses..." aria-label="Search courses input">
+                </div>
+                <button class="md:hidden p-2 text-gray-600 hover:text-blue-600" aria-label="Toggle bottom navigation" id="bottom-nav-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Bottom Navigation for Mobile -->
+        <nav class="bottom-nav md:hidden bg-white shadow-md fixed bottom-0 left-0 w-full p-4 z-50 flex justify-around items-center border-t border-gray-200" aria-label="Mobile bottom navigation">
+            <a href="index.html" class="flex flex-col items-center text-gray-600 hover:text-blue-600" aria-label="Home">
+                <i class="fas fa-home text-lg"></i>
+                <span class="text-xs">Home</span>
+            </a>
+            <a href="courses.html" class="flex flex-col items-center text-blue-600" aria-label="Courses">
+                <i class="fas fa-book-open text-lg"></i>
+                <span class="text-xs">Courses</span>
+            </a>
+            <a href="categories.html" class="flex flex-col items-center text-gray-600 hover:text-blue-600" aria-label="Categories">
+                <i class="fas fa-th-large text-lg"></i>
+                <span class="text-xs">Categories</span>
+            </a>
+            <a href="contact.html" class="flex flex-col items-center text-gray-600 hover:text-blue-600" aria-label="Contact">
+                <i class="fas fa-phone-alt text-lg"></i>
+                <span class="text-xs">Contact</span>
+            </a>
+        </nav>
+    </header>
+
+    <!-- Courses Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 id="courses-title" class="text-3xl font-bold text-gray-800 mb-8">All Courses</h2>
+            <!-- Filters and Sorting -->
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+                <div class="flex flex-wrap gap-4 mb-4 md:mb-0">
+                    <button class="filter-button px-4 py-2 border border-gray-300 rounded-md text-gray-600 hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white" data-level="All" aria-label="Show all courses">All</button>
+                    <button class="filter-button px-4 py-2 border border-gray-300 rounded-md text-gray-600 hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white" data-level="Beginner" aria-label="Show Beginner courses">Beginner</button>
+                    <button class="filter-button px-4 py-2 border border-gray-300 rounded-md text-gray-600 hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white" data-level="Intermediate" aria-label="Show Intermediate courses">Intermediate</button>
+                    <button class="filter-button px-4 py-2 border border-gray-300 rounded-md text-gray-600 hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white" data-level="Advanced" aria-label="Show Advanced courses">Advanced</button>
+                </div>
+                <select id="sort-select" class="p-2 border border-gray-300 rounded-md text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600" aria-label="Sort courses">
+                    <option value="rating-desc">Sort by Rating (High to Low)</option>
+                    <option value="rating-asc">Sort by Rating (Low to High)</option>
+                    <option value="reviews-desc">Sort by Reviews (High to Low)</option>
+                    <option value="reviews-asc">Sort by Reviews (Low to High)</option>
+                </select>
+            </div>
+            <!-- Courses Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="course-grid"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white pt-16 pb-20 md:pb-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <h3 class="text-xl font-bold mb-6 flex items-center">
+                        <i class="fas fa-graduation-cap mr-2" aria-hidden="true"></i> LearnHub
+                    </h3>
+                    <p class="text-gray-400 mb-4">The leading online learning platform that helps anyone learn business, software, technology, and creative skills to achieve personal and professional goals.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition" aria-label="Follow LearnHub on Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition" aria-label="Follow LearnHub on Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition" aria-label="Follow LearnHub on Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition" aria-label="Follow LearnHub on LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition" aria-label="Subscribe to LearnHub on YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Categories</h3>
+                    <ul class="space-y-3" id="footer-categories"></ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Quick Links</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition" aria-label="About LearnHub">About Us</a></li>
+                        <li><a href="contact.html" class="text-gray-400 hover:text-white transition" aria-label="Contact support">Contact</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition" aria-label="View careers at LearnHub">Careers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition" aria-label="Read our privacy policy">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Support</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition" aria-label="Visit help center">Help Center</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition" aria-label="Read our terms of service">Terms of Service</a></li>
+                        <li><a href="contact.html" class="text-gray-400 hover:text-white transition" aria-label="Contact support team">Support</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-6 text-center">
+                <p class="text-gray-400">© 2025 LearnHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Interactivity -->
+    <script>
+        // Utility function to generate star rating
+        function generateStars(rating) {
+            const fullStars = Math.floor(rating);
+            const halfStar = rating % 1 >= 0.5 ? 1 : 0;
+            let stars = '';
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<i class="fas fa-star" aria-hidden="true"></i>';
+            }
+            if (halfStar) {
+                stars += '<i class="fas fa-star-half-alt" aria-hidden="true"></i>';
+            }
+            for (let i = fullStars + halfStar; i < 5; i++) {
+                stars += '<i class="far fa-star" aria-hidden="true"></i>';
+            }
+            return stars;
+        }
+
+        // Fetch category title
+        async function fetchCategoryTitle(categoryId) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/categories/${categoryId}`);
+                if (!response.ok) throw new Error('Category not found');
+                const category = await response.json();
+                document.getElementById('courses-title').textContent = `${category.title} Courses`;
+            } catch (err) {
+                console.error('Error fetching category:', err);
+                document.getElementById('courses-title').textContent = 'Courses';
+            }
+        }
+
+        // Fetch and render courses
+        async function fetchCourses(categoryId, searchQuery, levelFilter = 'All', sortOption = 'rating-desc') {
+            try {
+                let url = 'http://localhost:3000/api/courses';
+                if (categoryId) {
+                    url += `?categoryId=${categoryId}`;
+                } else if (searchQuery) {
+                    url = `http://localhost:3000/api/search?q=${encodeURIComponent(searchQuery)}`;
+                }
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Failed to fetch courses');
+                const data = searchQuery ? (await response.json()).courses : await response.json();
+                let courses = data;
+
+                // Apply level filter
+                if (levelFilter !== 'All') {
+                    courses = courses.filter(course => course.level === levelFilter);
+                }
+
+                // Apply sorting
+                courses.sort((a, b) => {
+                    if (sortOption === 'rating-desc') return b.rating - a.rating;
+                    if (sortOption === 'rating-asc') return a.rating - b.rating;
+                    if (sortOption === 'reviews-desc') return b.reviews - a.reviews;
+                    if (sortOption === 'reviews-asc') return a.reviews - b.reviews;
+                    return 0;
+                });
+
+                const courseGrid = document.getElementById('course-grid');
+                courseGrid.innerHTML = courses.length > 0 ? courses.map(course => `
+                    <div class="course-card bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
+                        <div class="relative">
+                            <img src="${course.image}" alt="${course.title} preview" class="w-full h-48 object-cover">
+                            ${course.isBestseller ? '<div class="absolute top-2 right-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">Bestseller</div>' : ''}
+                        </div>
+                        <div class="p-5">
+                            <div class="flex items-center mb-2">
+                                <div class="flex text-yellow-400 text-sm">
+                                    ${generateStars(course.rating)}
+                                </div>
+                                <span class="text-gray-600 text-sm ml-2">(${course.reviews})</span>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">${course.title}</h3>
+                            <p class="text-gray-600 text-sm mb-4">${course.description}</p>
+                            <div class="flex items-center mb-4">
+                                <i class="fas fa-play-circle text-blue-600 mr-2" aria-hidden="true"></i>
+                                <span class="text-sm text-gray-600">${course.lectures} lectures</span>
+                            </div>
+                            <div class="course-actions">
+                                <a href="course-details.html?courseId=${course._id}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition" aria-label="View details for ${course.title}">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                `).join('') : '<p class="text-gray-600 text-center col-span-full">No courses found.</p>';
+            } catch (err) {
+                console.error('Error fetching courses:', err);
+                document.getElementById('course-grid').innerHTML = '<p class="text-red-600 text-center col-span-full">Failed to load courses.</p>';
+            }
+        }
+
+        // Fetch and render categories in footer
+        async function fetchCategories() {
+            try {
+                const response = await fetch('http://localhost:3000/api/categories');
+                const categories = await response.json();
+                const footerCategories = document.getElementById('footer-categories');
+                footerCategories.innerHTML = categories.map(category => `
+                    <li><a href="courses.html?categoryId=${category._id}" class="text-gray-400 hover:text-white transition" aria-label="Explore ${category.title} courses">${category.title}</a></li>
+                `).join('');
+            } catch (err) {
+                console.error('Error fetching categories:', err);
+                document.getElementById('footer-categories').innerHTML = '<p class="text-red-600">Failed to load categories.</p>';
+            }
+        }
+
+        // Initialize page
+        async function initialize() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoryId = urlParams.get('categoryId');
+            const searchQuery = urlParams.get('q');
+
+            if (categoryId) {
+                await fetchCategoryTitle(categoryId);
+                await fetchCourses(categoryId);
+            } else if (searchQuery) {
+                document.getElementById('courses-title').textContent = `Search Results for "${searchQuery}"`;
+                await fetchCourses(null, searchQuery);
+            } else {
+                await fetchCourses();
+            }
+            await fetchCategories();
+
+            // Set up filters
+            const filterButtons = document.querySelectorAll('.filter-button');
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    const level = button.getAttribute('data-level');
+                    const sortOption = document.getElementById('sort-select').value;
+                    fetchCourses(categoryId, searchQuery, level, sortOption);
+                });
+            });
+
+            // Set up sorting
+            document.getElementById('sort-select').addEventListener('change', (e) => {
+                const sortOption = e.target.value;
+                const activeFilter = document.querySelector('.filter-button.active')?.getAttribute('data-level') || 'All';
+                fetchCourses(categoryId, searchQuery, activeFilter, sortOption);
+            });
+
+            // Set default filter
+            document.querySelector('.filter-button[data-level="All"]').classList.add('active');
+        }
+
+        // Bottom Navigation Toggle
+        const bottomNavToggle = document.getElementById('bottom-nav-toggle');
+        const bottomNav = document.querySelector('.bottom-nav');
+        bottomNavToggle.addEventListener('click', () => {
+            bottomNav.classList.toggle('hidden');
+        });
+
+        // Search Bar Toggle and Redirect
+        const searchButton = document.getElementById('search-toggle');
+        const searchInput = document.getElementById('search-input');
+        searchButton.addEventListener('click', () => {
+            searchInput.classList.toggle('hidden');
+            if (!searchInput.classList.contains('hidden')) {
+                searchInput.focus();
+            }
+        });
+
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.trim();
+            if (searchTerm) {
+                window.location.href = `courses.html?q=${encodeURIComponent(searchTerm)}`;
+            }
+        });
+
+        // Keyboard Accessibility
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !bottomNav.classList.contains('hidden')) {
+                bottomNav.classList.add('hidden');
+            }
+            if (e.key === 'Escape' && !searchInput.classList.contains('hidden')) {
+                searchInput.classList.add('hidden');
+            }
+        });
+
+        // Initialize
+        initialize();
+    </script>
+</body>
+</html>

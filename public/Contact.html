@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnHub - Contact</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .bottom-nav {
+            transition: transform 0.3s ease-in-out;
+        }
+        .bottom-nav.hidden {
+            transform: translateY(100%);
+        }
+        a:focus, button:focus, input:focus, textarea:focus {
+            outline: 2px solid #4A90E2;
+            outline-offset: 2px;
+        }
+        .text-gray-600 {
+            color: #374151;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .contact-form {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <a href="index.html" class="text-2xl font-bold text-blue-600 flex items-center" aria-label="LearnHub Home">
+                    <i class="fas fa-graduation-cap mr-2"></i>
+                    LearnHub
+                </a>
+            </div>
+            
+            <nav class="hidden md:flex space-x-8" aria-label="Main navigation">
+                <a href="index.html" class="text-gray-700 hover:text-blue-600 font-medium">Home</a>
+                <a href="courses.html" class="text-gray-700 hover:text-blue-600 font-medium">Courses</a>
+                <a href="categories.html" class="text-gray-700 hover:text-blue-600 font-medium">Categories</a>
+                <a href="#" class="text-blue-600 font-medium border-b-2 border-blue-600">Contact</a>
+            </nav>
+            
+            <div class="flex items-center space-x-4">
+                <button class="p-2 text-gray-600 hover:text-blue-600" aria-label="Search site" id="search-toggle">
+                    <i class="fas fa-search"></i>
+                </button>
+                <div class="relative">
+                    <input type="search" id="search-input" class="hidden p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 w-64" placeholder="Search site..." aria-label="Search site input">
+                </div>
+                <button class="md:hidden p-2 text-gray-600 hover:text-blue-600" aria-label="Toggle bottom navigation" id="bottom-nav-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        <nav class="bottom-nav md:hidden bg-white shadow-md fixed bottom-0 left-0 w-full p-4 z-50 flex justify-around items-center border-t border-gray-200" aria-label="Mobile bottom navigation">
+            <a href="index.html" class="flex flex-col items-center text-gray-600 hover:text-blue-600" aria-label="Home">
+                <i class="fas fa-home text-lg"></i>
+                <span class="text-xs">Home</span>
+            </a>
+            <a href="courses.html" class="flex flex-col items-center text-gray-600 hover:text-blue-600" aria-label="Courses">
+                <i class="fas fa-book-open text-lg"></i>
+                <span class="text-xs">Courses</span>
+            </a>
+            <a href="categories.html" class="flex flex-col items-center text-gray-600 hover:text-blue-600" aria-label="Categories">
+                <i class="fas fa-th-large text-lg"></i>
+                <span class="text-xs">Categories</span>
+            </a>
+            <a href="#" class="flex flex-col items-center text-blue-600 font-medium" aria-label="Contact">
+                <i class="fas fa-phone-alt text-lg"></i>
+                <span class="text-xs">Contact</span>
+            </a>
+        </nav>
+    </header>
+
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold text-gray-800 mb-4">Contact Us</h1>
+                <p class="text-gray-600 max-w-2xl mx-auto">Have questions or need support? Fill out the form below, and our team will get back to you as soon as possible.</p>
+            </div>
+
+            <div class="contact-form max-w-2xl mx-auto bg-white rounded-lg shadow-sm p-8">
+                <div class="space-y-6">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                        <input type="text" id="name" class="mt-1 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Your name" aria-required="true">
+                        <p class="error hidden text-red-600 text-sm mt-1" id="name-error">Please enter your name.</p>
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="email" class="mt-1 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Your email" aria-required="true">
+                        <p class="error hidden text-red-600 text-sm mt-1" id="email-error">Please enter a valid email address.</p>
+                    </div>
+                    <div>
+                        <label for="subject" class="block text-sm font-medium text-gray-700">Subject</label>
+                        <input type="text" id="subject" class="mt-1 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Subject" aria-required="true">
+                        <p class="error hidden text-red-600 text-sm mt-1" id="subject-error">Please enter a subject.</p>
+                    </div>
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-gray-700">Message</label>
+                        <textarea id="message" rows="5" class="mt-1 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Your message" aria-required="true"></textarea>
+                        <p class="error hidden text-red-600 text-sm mt-1" id="message-error">Please enter your message.</p>
+                    </div>
+                    <div>
+                        <button id="submit-btn" class="w-full bg-blue-600 text-white px-6 py-3 rounded-md font-medium hover:bg-blue-700 transition" aria-label="Submit contact form">Send Message</button>
+                    </div>
+                    <div class="hidden text-center text-green-600 font-medium" id="success-message">Your message has been sent successfully!</div>
+                    <div class="hidden text-center text-red-600 font-medium" id="error-message">Failed to send message. Please try again.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-white pt-16 pb-20 md:pb-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <h3 class="text-xl font-bold mb-6 flex items-center">
+                        <i class="fas fa-graduation-cap mr-2" aria-hidden="true"></i> LearnHub
+                    </h3>
+                    <p class="text-gray-400 mb-4">The leading online learning platform that helps anyone learn business, software, technology, and creative skills to achieve personal and professional goals.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition" aria-label="Follow LearnHub on Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition" aria-label="Follow LearnHub on Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition" aria-label="Follow LearnHub on Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition" aria-label="Follow LearnHub on LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition" aria-label="Subscribe to LearnHub on YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Categories</h3>
+                    <ul class="space-y-3">
+                        <li><a href="courses.html" class="text-gray-400 hover:text-white transition" aria-label="Explore Development courses">Development</a></li>
+                        <li><a href="courses.html" class="text-gray-400 hover:text-white transition" aria-label="Explore Business courses">Business</a></li>
+                        <li><a href="courses.html" class="text-gray-400 hover:text-white transition" aria-label="Explore Finance courses">Finance</a></li>
+                        <li><a href="courses.html" class="text-gray-400 hover:text-white transition" aria-label="Explore Design courses">Design</a></li>
+                        <li><a href="courses.html" class="text-gray-400 hover:text-white transition" aria-label="Explore Marketing courses">Marketing</a></li>
+                        <li><a href="courses.html" class="text-gray-400 hover:text-white transition" aria-label="Explore Music courses">Music</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Quick Links</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition" aria-label="About LearnHub">About Us</a></li>
+                        <li><a href="contact.html" class="text-gray-400 hover:text-white transition" aria-label="Contact support">Contact</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition" aria-label="View careers at LearnHub">Careers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition" aria-label="Read our privacy policy">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Support</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition" aria-label="Visit help center">Help Center</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition" aria-label="Read our terms of service">Terms of Service</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition" aria-label="View refund policy">Refund Policy</a></li>
+                        <li><a href="contact.html" class="text-gray-400 hover:text-white transition" aria-label="Contact support team">Support</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-6 text-center">
+                <p class="text-gray-400">© 2025 LearnHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Bottom Navigation Toggle
+        const bottomNavToggle = document.getElementById('bottom-nav-toggle');
+        const bottomNav = document.querySelector('.bottom-nav');
+
+        bottomNavToggle.addEventListener('click', () => {
+            bottomNav.classList.toggle('hidden');
+        });
+
+        // Search Bar Toggle
+        const searchButton = document.getElementById('search-toggle');
+        const searchInput = document.getElementById('search-input');
+
+        searchButton.addEventListener('click', () => {
+            searchInput.classList.toggle('hidden');
+            if (!searchInput.classList.contains('hidden')) {
+                searchInput.focus();
+            }
+        });
+
+        // Contact Form Handling
+        const submitButton = document.getElementById('submit-btn');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const subjectInput = document.getElementById('subject');
+        const messageInput = document.getElementById('message');
+        const successMessage = document.getElementById('success-message');
+        const errorMessage = document.getElementById('error-message');
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        submitButton.addEventListener('click', async () => {
+            let isValid = true;
+
+            // Reset error messages
+            document.querySelectorAll('.error').forEach(error => error.classList.add('hidden'));
+            successMessage.classList.add('hidden');
+            errorMessage.classList.add('hidden');
+
+            // Validate inputs
+            if (!nameInput.value.trim()) {
+                document.getElementById('name-error').classList.remove('hidden');
+                isValid = false;
+            }
+            if (!emailInput.value.trim() || !validateEmail(emailInput.value)) {
+                document.getElementById('email-error').classList.remove('hidden');
+                isValid = false;
+            }
+            if (!subjectInput.value.trim()) {
+                document.getElementById('subject-error').classList.remove('hidden');
+                isValid = false;
+            }
+            if (!messageInput.value.trim()) {
+                document.getElementById('message-error').classList.remove('hidden');
+                isValid = false;
+            }
+
+            if (isValid) {
+                try {
+                    const response = await fetch('http://localhost:3000/api/contact', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            name: nameInput.value.trim(),
+                            email: emailInput.value.trim(),
+                            subject: subjectInput.value.trim(),
+                            message: messageInput.value.trim()
+                        })
+                    });
+
+                    if (response.ok) {
+                        successMessage.classList.remove('hidden');
+                        nameInput.value = '';
+                        emailInput.value = '';
+                        subjectInput.value = '';
+                        messageInput.value = '';
+                        setTimeout(() => {
+                            successMessage.classList.add('hidden');
+                        }, 3000);
+                    } else {
+                        const { error } = await response.json();
+                        errorMessage.textContent = error || 'Failed to send message. Please try again.';
+                        errorMessage.classList.remove('hidden');
+                        setTimeout(() => {
+                            errorMessage.classList.add('hidden');
+                        }, 3000);
+                    }
+                } catch (error) {
+                    console.error('Error submitting form:', error);
+                    errorMessage.textContent = 'An error occurred. Please try again later.';
+                    errorMessage.classList.remove('hidden');
+                    setTimeout(() => {
+                        errorMessage.classList.add('hidden');
+                    }, 3000);
+                }
+            }
+        });
+
+        // Keyboard Accessibility
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !bottomNav.classList.contains('hidden')) {
+                bottomNav.classList.add('hidden');
+            }
+            if (e.key === 'Escape' && !searchInput.classList.contains('hidden')) {
+                searchInput.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

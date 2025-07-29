@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnHub - Course Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .bottom-nav {
+            transition: transform 0.3s ease-in-out;
+        }
+        .bottom-nav.hidden {
+            transform: translateY(100%);
+        }
+        a:focus, button:focus, input:focus, select:focus {
+            outline: 2px solid #4A90E2;
+            outline-offset: 2px;
+        }
+        .text-gray-600 {
+            color: #374151;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .course-details {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header/Navigation -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <a href="index.html" class="text-2xl font-bold text-blue-600 flex items-center" aria-label="LearnHub Home">
+                    <i class="fas fa-graduation-cap mr-2"></i>
+                    LearnHub
+                </a>
+            </div>
+            <nav class="hidden md:flex space-x-8" aria-label="Main navigation">
+                <a href="index.html" class="text-gray-700 hover:text-blue-600 font-medium">Home</a>
+                <a href="courses.html" class="text-blue-600 font-medium border-b-2 border-blue-600">Courses</a>
+                <a href="categories.html" class="text-gray-700 hover:text-blue-600 font-medium">Categories</a>
+                <a href="contact.html" class="text-gray-700 hover:text-blue-600 font-medium">Contact</a>
+            </nav>
+            <div class="flex items-center space-x-4">
+                <button class="p-2 text-gray-600 hover:text-blue-600" aria-label="Search courses" id="search-toggle">
+                    <i class="fas fa-search"></i>
+                </button>
+                <div class="relative">
+                    <input type="search" id="search-input" class="hidden p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 w-64" placeholder="Search courses..." aria-label="Search courses input">
+                </div>
+                <button class="md:hidden p-2 text-gray-600 hover:text-blue-600" aria-label="Toggle bottom navigation" id="bottom-nav-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        <nav class="bottom-nav md:hidden bg-white shadow-md fixed bottom-0 left-0 w-full p-4 z-50 flex justify-around items-center border-t border-gray-200" aria-label="Mobile bottom navigation">
+            <a href="index.html" class="flex flex-col items-center text-gray-600 hover:text-blue-600" aria-label="Home">
+                <i class="fas fa-home text-lg"></i>
+                <span class="text-xs">Home</span>
+            </a>
+            <a href="courses.html" class="flex flex-col items-center text-blue-600 font-medium" aria-label="Courses">
+                <i class="fas fa-book-open text-lg"></i>
+                <span class="text-xs">Courses</span>
+            </a>
+            <a href="categories.html" class="flex flex-col items-center text-gray-600 hover:text-blue-600" aria-label="Categories">
+                <i class="fas fa-th-large text-lg"></i>
+                <span class="text-xs">Categories</span>
+            </a>
+            <a href="contact.html" class="flex flex-col items-center text-gray-600 hover:text-blue-600" aria-label="Contact">
+                <i class="fas fa-phone-alt text-lg"></i>
+                <span class="text-xs">Contact</span>
+            </a>
+        </nav>
+    </header>
+
+    <!-- Course Details Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 course-details">
+            <div id="course-details" class="max-w-4xl mx-auto">
+                <!-- Course details will be populated here -->
+            </div>
+            <div class="max-w-4xl mx-auto mt-8">
+                <div id="payment-form" class="mb-4">
+                    <label for="user-phone" class="block text-gray-600 font-medium mb-2">Phone Number</label>
+                    <input type="tel" id="user-phone" class="p-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 mb-4" placeholder="+2348012345678" aria-label="Enter your phone number">
+                    <label for="bank-code" class="block text-gray-600 font-medium mb-2">Select Bank</label>
+                    <select id="bank-code" class="p-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 mb-4" aria-label="Select your bank">
+                        <option value="">Select a bank</option>
+                        <option value="033">United Bank for Africa (UBA)</option>
+                        <option value="058">Guaranty Trust Bank (GTB)</option>
+                        <option value="011">First Bank of Nigeria</option>
+                        <!-- Add more banks as needed -->
+                    </select>
+                    <button id="pay-btn" class="bg-blue-600 text-white px-6 py-3 rounded-md font-medium hover:bg-blue-700 transition" aria-label="Pay for course">Pay Now ($49.99)</button>
+                </div>
+                <a id="download-pdf" href="#" class="hidden inline-block bg-green-600 text-white px-6 py-3 rounded-md font-medium hover:bg-green-700 transition ml-4" aria-label="Download course syllabus">Download Syllabus (PDF)</a>
+                <p id="payment-message" class="hidden text-green-600 font-medium mt-4"></p>
+                <p id="error-message" class="hidden text-red-600 font-medium mt-4"></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white pt-16 pb-20 md:pb-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <h3 class="text-xl font-bold mb-6 flex items-center">
+                        <i class="fas fa-graduation-cap mr-2" aria-hidden="true"></i> LearnHub
+                    </h3>
+                    <p class="text-gray-400 mb-4">The leading online learning platform that helps anyone learn business, software, technology, and creative skills to achieve personal and professional goals.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition" aria-label="Follow LearnHub on Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition" aria-label="Follow LearnHub on Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition" aria-label="Follow LearnHub on Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition" aria-label="Follow LearnHub on LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition" aria-label="Subscribe to LearnHub on YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Categories</h3>
+                    <ul class="space-y-3" id="footer-categories"></ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Quick Links</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition" aria-label="About LearnHub">About Us</a></li>
+                        <li><a href="contact.html" class="text-gray-400 hover:text-white transition" aria-label="Contact support">Contact</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition" aria-label="View careers at LearnHub">Careers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition" aria-label="Read our privacy policy">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Support</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition" aria-label="Visit help center">Help Center</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition" aria-label="Read our terms of service">Terms of Service</a></li>
+                        <li><a href="contact.html" class="text-gray-400 hover:text-white transition" aria-label="Contact support team">Support</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-6 text-center">
+                <p class="text-gray-400">© 2025 LearnHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Interactivity -->
+    <script>
+        // Utility function to generate star rating
+        function generateStars(rating) {
+            const fullStars = Math.floor(rating);
+            const halfStar = rating % 1 >= 0.5 ? 1 : 0;
+            let stars = '';
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<i class="fas fa-star" aria-hidden="true"></i>';
+            }
+            if (halfStar) {
+                stars += '<i class="fas fa-star-half-alt" aria-hidden="true"></i>';
+            }
+            for (let i = fullStars + halfStar; i < 5; i++) {
+                stars += '<i class="far fa-star" aria-hidden="true"></i>';
+            }
+            return stars;
+        }
+
+        // Fetch and render footer categories
+        async function fetchFooterCategories() {
+            try {
+                const response = await fetch('http://localhost:3000/api/categories');
+                const categories = await response.json();
+                const footerCategories = document.getElementById('footer-categories');
+                footerCategories.innerHTML = categories.map(category => `
+                    <li><a href="categories.html" class="text-gray-400 hover:text-white transition" aria-label="Explore ${category.title} courses">${category.title}</a></li>
+                `).join('');
+            } catch (err) {
+                console.error('Error fetching footer categories:', err);
+            }
+        }
+
+        // Fetch course details
+        async function fetchCourseDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const courseId = urlParams.get('courseId');
+            if (!courseId) {
+                document.getElementById('course-details').innerHTML = '<p class="text-red-600 text-center">No course ID provided.</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/courses/${courseId}`);
+                const course = await response.json();
+                if (!response.ok) {
+                    throw new Error(course.error || 'Failed to fetch course details');
+                }
+                const courseDetails = document.getElementById('course-details');
+                courseDetails.innerHTML = `
+                    <div class="bg-white rounded-lg shadow-sm p-8">
+                        <div class="flex flex-col md:flex-row gap-8">
+                            <div class="md:w-1/2">
+                                <img src="${course.image}" alt="${course.title} preview" class="w-full h-64 object-cover rounded-md">
+                            </div>
+                            <div class="md:w-1/2">
+                                <h1 class="text-3xl font-bold text-gray-800 mb-4">${course.title}</h1>
+                                <p class="text-gray-600 mb-4">${course.description}</p>
+                                <div class="flex items-center mb-4">
+                                    <div class="flex text-yellow-400 text-sm">
+                                        ${generateStars(course.rating)}
+                                    </div>
+                                    <span class="text-gray-600 text-sm ml-2">(${course.reviews} reviews)</span>
+                                </div>
+                                <p class="text-gray-600 mb-2"><strong>Category:</strong> ${course.category ? course.category.title : 'Unknown'}</p>
+                                <p class="text-gray-600 mb-2"><strong>Level:</strong> ${course.level}</p>
+                                <p class="text-gray-600 mb-2"><strong>Lectures:</strong> ${course.lectures}</p>
+                                ${course.isBestseller ? '<span class="inline-block bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded mt-2">Bestseller</span>' : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                console.error('Error fetching course details:', err);
+                document.getElementById('course-details').innerHTML = '<p class="text-red-600 text-center">Failed to load course details. Please try again.</p>';
+            }
+        }
+
+        // Payment handling with OPay
+        const payButton = document.getElementById('pay-btn');
+        const userPhoneInput = document.getElementById('user-phone');
+        const bankCodeSelect = document.getElementById('bank-code');
+        const downloadPdfLink = document.getElementById('download-pdf');
+        const paymentMessage = document.getElementById('payment-message');
+        const errorMessage = document.getElementById('error-message');
+
+        payButton.addEventListener('click', async () => {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const courseId = urlParams.get('courseId');
+                const userPhone = userPhoneInput.value.trim();
+                const bankCode = bankCodeSelect.value;
+
+                if (!userPhone) {
+                    throw new Error('Please enter a valid phone number');
+                }
+                if (!bankCode) {
+                    throw new Error('Please select a bank');
+                }
+
+                const response = await fetch(`http://localhost:3000/api/pay`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ courseId, userPhone, bankCode })
+                });
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.error || 'Payment failed');
+                }
+                if (result.ussdCode) {
+                    paymentMessage.textContent = `Please dial ${result.ussdCode} on your phone to complete the payment.`;
+                    paymentMessage.classList.remove('hidden');
+                    setTimeout(() => paymentMessage.classList.add('hidden'), 10000);
+                    // Store reference for verification
+                    localStorage.setItem('paymentReference', result.reference);
+                } else {
+                    throw new Error('No USSD code received');
+                }
+            } catch (err) {
+                console.error('Error processing payment:', err);
+                errorMessage.textContent = err.message || 'Payment failed. Please try again.';
+                errorMessage.classList.remove('hidden');
+                setTimeout(() => errorMessage.classList.add('hidden'), 5000);
+            }
+        });
+
+        // Check payment status on page load (after user completes USSD payment)
+        window.addEventListener('load', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const courseId = urlParams.get('courseId');
+            const reference = localStorage.getItem('paymentReference'); // Retrieve stored reference
+            if (reference) {
+                try {
+                    const response = await fetch(`http://localhost:3000/api/payment-callback`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ reference, status: 'SUCCESS' }) // Mock status for client-side check
+                    });
+                    const result = await response.json();
+                    if (response.ok && result.message === 'Payment verified successfully') {
+                        paymentMessage.textContent = 'Payment successful! You can now download the syllabus.';
+                        paymentMessage.classList.remove('hidden');
+                        downloadPdfLink.href = `http://localhost:3000/api/courses/${courseId}/syllabus`;
+                        downloadPdfLink.classList.remove('hidden');
+                        payButton.classList.add('hidden');
+                        localStorage.removeItem('paymentReference'); // Clear reference after verification
+                        setTimeout(() => paymentMessage.classList.add('hidden'), 5000);
+                    } else {
+                        throw new Error(result.error || 'Payment verification failed');
+                    }
+                } catch (err) {
+                    console.error('Error verifying payment:', err);
+                    errorMessage.textContent = err.message || 'Payment verification failed. Please try again.';
+                    errorMessage.classList.remove('hidden');
+                    setTimeout(() => errorMessage.classList.add('hidden'), 5000);
+                }
+            }
+        });
+
+        // Bottom Navigation Toggle
+        const bottomNavToggle = document.getElementById('bottom-nav-toggle');
+        const bottomNav = document.querySelector('.bottom-nav');
+        bottomNavToggle.addEventListener('click', () => {
+            bottomNav.classList.toggle('hidden');
+        });
+
+        // Search Bar Toggle
+        const searchButton = document.getElementById('search-toggle');
+        const searchInput = document.getElementById('search-input');
+        searchButton.addEventListener('click', () => {
+            searchInput.classList.toggle('hidden');
+            if (!searchInput.classList.contains('hidden')) {
+                searchInput.focus();
+            }
+        });
+
+        // Search Redirect
+        searchInput.addEventListener('input', async () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            if (searchTerm) {
+                window.location.href = `courses.html?q=${encodeURIComponent(searchTerm)}`;
+            }
+        });
+
+        // Keyboard Accessibility
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !bottomNav.classList.contains('hidden')) {
+                bottomNav.classList.add('hidden');
+            }
+            if (e.key === 'Escape' && !searchInput.classList.contains('hidden')) {
+                searchInput.classList.add('hidden');
+            }
+        });
+
+        // Initialize
+        fetchCourseDetails();
+        fetchFooterCategories();
+    </script>
+</body>
+</html>

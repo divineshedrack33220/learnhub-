@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnHub - Online Learning Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .course-card:hover .course-actions {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .course-actions {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #4A90E2 0%, #6C5CE7 100%);
+        }
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .accordion-content.open {
+            max-height: 300px;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #e0e0e0;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            background-color: #4A90E2;
+            transition: width 0.3s ease;
+        }
+        .text-gray-600 {
+            color: #374151;
+        }
+        .bottom-nav {
+            transition: transform 0.3s ease-in-out;
+        }
+        .bottom-nav.hidden {
+            transform: translateY(100%);
+        }
+        a:focus, button:focus, input:focus {
+            outline: 2px solid #4A90E2;
+            outline-offset: 2px;
+        }
+        .trust-indicator {
+            color: #1F2937;
+        }
+        .hero-image {
+            min-height: 200px; /* Ensure container doesn't collapse */
+            background-color: #f0f0f0; /* Fallback background */
+        }
+        .hero-image img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header/Navigation -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <a href="#" class="text-2xl font-bold text-blue-600 flex items-center" aria-label="LearnHub Home">
+                    <i class="fas fa-graduation-cap mr-2"></i>
+                    LearnHub
+                </a>
+            </div>
+            <nav class="hidden md:flex space-x-8" aria-label="Main navigation">
+                <a href="#" class="text-blue-600 font-medium border-b-2 border-blue-600">Home</a>
+                <a href="courses.html" class="text-gray-700 hover:text-blue-600 font-medium">Courses</a>
+                <a href="categories.html" class="text-gray-700 hover:text-blue-600 font-medium">Categories</a>
+                <a href="contact.html" class="text-gray-700 hover:text-blue-600 font-medium">Contact</a>
+            </nav>
+            <div class="flex items-center space-x-4">
+                <button class="p-2 text-gray-600 hover:text-blue-600" aria-label="Search courses" id="search-toggle">
+                    <i class="fas fa-search"></i>
+                </button>
+                <div class="relative">
+                    <input type="search" id="search-input" class="hidden p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="Search courses..." aria-label="Search courses input">
+                </div>
+                <button class="md:hidden p-2 text-gray-600 hover:text-blue-600" aria-label="Toggle bottom navigation" id="bottom-nav-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Bottom Navigation for Mobile -->
+        <nav class="bottom-nav md:hidden bg-white shadow-md fixed bottom-0 left-0 w-full p-4 z-50 flex justify-around items-center border-t border-gray-200" aria-label="Mobile bottom navigation">
+            <a href="#" class="flex flex-col items-center text-blue-600 font-medium" aria-label="Home">
+                <i class="fas fa-home text-lg"></i>
+                <span class="text-xs">Home</span>
+            </a>
+            <a href="courses.html" class="flex flex-col items-center text-gray-600 hover:text-blue-600" aria-label="Courses">
+                <i class="fas fa-book-open text-lg"></i>
+                <span class="text-xs">Courses</span>
+            </a>
+            <a href="categories.html" class="flex flex-col items-center text-gray-600 hover:text-blue-600" aria-label="Categories">
+                <i class="fas fa-th-large text-lg"></i>
+                <span class="text-xs">Categories</span>
+            </a>
+            <a href="contact.html" class="flex flex-col items-center text-gray-600 hover:text-blue-600" aria-label="Contact">
+                <i class="fas fa-phone-alt text-lg"></i>
+                <span class="text-xs">Contact</span>
+            </a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white py-16 md:py-24">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">Unlock Your Potential with World-Class Courses</h1>
+                <p class="text-xl mb-8 opacity-90">Explore a wide range of courses to gain practical skills for personal and professional growth.</p>
+                <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+                    <a href="courses.html" class="bg-white text-blue-600 px-6 py-3 rounded-md font-medium hover:bg-gray-100 transition" aria-label="Explore available courses">
+                        Explore Courses
+                    </a>
+                    <a href="contact.html" class="border border-white text-white px-6 py-3 rounded-md font-medium hover:bg-white hover:bg-opacity-10 transition" aria-label="Contact our support team">
+                        <i class="fas fa-phone-alt mr-2" aria-hidden="true"></i> Contact Us
+                    </a>
+                </div>
+            </div>
+            <div class="md:w-1/2 flex justify-center">
+                <div class="relative w-full max-w-md" id="hero-course">
+                    <div class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin text-white text-3xl" aria-hidden="true"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Indicators -->
+    <div class="bg-gray-100 py-6">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16">
+                <div class="flex items-center trust-indicator">
+                    <i class="fas fa-users text-blue-600 text-xl mr-3" aria-hidden="true"></i>
+                    <span>500,000+ Students</span>
+                </div>
+                <div class="flex items-center trust-indicator">
+                    <i class="fas fa-infinity text-blue-600 text-xl mr-3" aria-hidden="true"></i>
+                    <span>Lifetime Access</span>
+                </div>
+                <div class="flex items-center trust-indicator">
+                    <i class="fas fa-certificate text-blue-600 text-xl mr-3" aria-hidden="true"></i>
+                    <span>Certificates</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Courses -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center mb-10">
+                <h2 class="text-3xl font-bold text-gray-800">Featured Courses</h2>
+                <a href="courses.html" class="text-blue-600 hover:text-blue-800 font-medium flex items-center" aria-label="View all courses">
+                    View All Courses <i class="fas fa-arrow-right ml-2" aria-hidden="true"></i>
+                </a>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="course-grid">
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin text-gray-600 text-3xl" aria-hidden="true"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Browse Top Categories</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Discover courses across popular categories to find what interests you most</p>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6" id="category-grid">
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin text-gray-600 text-3xl" aria-hidden="true"></i>
+                </div>
+            </div>
+            <div class="text-center mt-12">
+                <a href="categories.html" class="bg-white border border-blue-600 text-blue-600 px-6 py-3 rounded-md font-medium hover:bg-blue-50 transition" aria-label="View all course categories">
+                    View All Categories
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">How It Works</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Start learning in just a few simple steps</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="text-center px-6">
+                    <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-blue-600 text-2xl font-bold">1</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Find Your Course</h3>
+                    <p class="text-gray-600">Browse our extensive catalog and find the perfect course for your goals and skill level.</p>
+                </div>
+                <div class="text-center px-6">
+                    <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-blue-600 text-2xl font-bold">2</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Start Learning</h3>
+                    <p class="text-gray-600">Access high-quality content and learn at your own pace to master new skills.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">What Our Students Say</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Don't just take our word for it - hear from our students</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="testimonial-card bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition duration-300">
+                    <div class="flex items-center mb-6">
+                        <div class="flex text-yellow-400">
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-6">"The web development course completely transformed my career. I went from knowing nothing to landing a junior developer position in just 6 months!"</p>
+                    <div class="flex items-center">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sarah Johnson, Web Developer" class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Sarah Johnson</h4>
+                            <p class="text-sm text-gray-600">Web Developer</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition duration-300">
+                    <div class="flex items-center mb-6">
+                        <div class="flex text-yellow-400">
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star-half-alt" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-6">"The course materials are top-notch. I've taken several courses here and each one has been excellent."</p>
+                    <div class="flex items-center">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Michael Chen, Data Scientist" class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Michael Chen</h4>
+                            <p class="text-sm text-gray-600">Data Scientist</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition duration-300">
+                    <div class="flex items-center mb-6">
+                        <div class="flex text-yellow-400">
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-6">"I was able to start my own freelance business after completing the digital marketing course. The practical skills I learned were immediately applicable."</p>
+                    <div class="flex items-center">
+                        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Jessica Martinez, Freelance Marketer" class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Jessica Martinez</h4>
+                            <p class="text-sm text-gray-600">Freelance Marketer</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-blue-600 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-6">Ready to Start Learning?</h2>
+            <p class="text-xl mb-8 max-w-2xl mx-auto opacity-90">Join thousands of students who are advancing their careers with our courses.</p>
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <a href="courses.html" class="bg-white text-blue-600 px-8 py-3 rounded-md font-medium hover:bg-gray-100 transition" aria-label="Browse available courses">
+                    Browse Courses
+                </a>
+                <a href="contact.html" class="border border-white text-white px-8 py-3 rounded-md font-medium hover:bg-white hover:bg-opacity-10 transition" aria-label="Contact our support team">
+                    <i class="fas fa-phone-alt mr-2" aria-hidden="true"></i> Contact Us
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Frequently Asked Questions</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Find answers to common questions about our courses and platform</p>
+            </div>
+            <div class="max-w-3xl mx-auto">
+                <div class="mb-4 border-b border-gray-200 pb-4">
+                    <button class="faq-toggle flex justify-between items-center w-full text-left font-medium text-gray-800 hover:text-blue-600 focus:outline-none" aria-expanded="false" aria-controls="faq-1">
+                        <span>How do I access the courses?</span>
+                        <i class="fas fa-chevron-down transition-transform duration-300" aria-hidden="true"></i>
+                    </button>
+                    <div class="accordion-content mt-2 text-gray-600" id="faq-1">
+                        <p>You can access all courses directly through the platform by browsing the course catalog and selecting the course you want to start learning.</p>
+                    </div>
+                </div>
+                <div class="mb-4 border-b border-gray-200 pb-4">
+                    <button class="faq-toggle flex justify-between items-center w-full text-left font-medium text-gray-800 hover:text-blue-600 focus:outline-none" aria-expanded="false" aria-controls="faq-2">
+                        <span>Do you offer certificates upon completion?</span>
+                        <i class="fas fa-chevron-down transition-transform duration-300" aria-hidden="true"></i>
+                    </button>
+                    <div class="accordion-content mt-2 text-gray-600" id="faq-2">
+                        <p>Yes! Most of our courses offer a certificate of completion once you finish all the course requirements. These certificates can be downloaded as PDFs and shared on LinkedIn or included in your resume.</p>
+                    </div>
+                </div>
+                <div class="mb-4 border-b border-gray-200 pb-4">
+                    <button class="faq-toggle flex justify-between items-center w-full text-left font-medium text-gray-800 hover:text-blue-600 focus:outline-none" aria-expanded="false" aria-controls="faq-3">
+                        <span>Can I learn at my own pace?</span>
+                        <i class="fas fa-chevron-down transition-transform duration-300" aria-hidden="true"></i>
+                    </button>
+                    <div class="accordion-content mt-2 text-gray-600" id="faq-3">
+                        <p>Absolutely! All our courses are self-paced, meaning you can learn whenever it's convenient for you. There are no deadlines, and you'll have lifetime access to course materials.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white pt-16 pb-20 md:pb-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <h3 class="text-xl font-bold mb-6 flex items-center">
+                        <i class="fas fa-graduation-cap mr-2" aria-hidden="true"></i> LearnHub
+                    </h3>
+                    <p class="text-gray-400 mb-4">The leading online learning platform that helps anyone learn business, software, technology, and creative skills to achieve personal and professional goals.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition" aria-label="Follow LearnHub on Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition" aria-label="Follow LearnHub on Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition" aria-label="Follow LearnHub on Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition" aria-label="Follow LearnHub on LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition" aria-label="Subscribe to LearnHub on YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Categories</h3>
+                    <ul class="space-y-3" id="footer-categories"></ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Quick Links</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition" aria-label="About LearnHub">About Us</a></li>
+                        <li><a href="contact.html" class="text-gray-400 hover:text-white transition" aria-label="Contact support">Contact</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition" aria-label="View careers at LearnHub">Careers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition" aria-label="Read our privacy policy">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Support</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition" aria-label="Visit help center">Help Center</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition" aria-label="Read our terms of service">Terms of Service</a></li>
+                        <li><a href="contact.html" class="text-gray-400 hover:text-white transition" aria-label="Contact support team">Support</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-6 text-center">
+                <p class="text-gray-400">© 2025 LearnHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Interactivity -->
+    <script>
+        // Utility function to generate star rating
+        function generateStars(rating) {
+            const fullStars = Math.floor(rating);
+            const halfStar = rating % 1 >= 0.5 ? 1 : 0;
+            let stars = '';
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<i class="fas fa-star" aria-hidden="true"></i>';
+            }
+            if (halfStar) {
+                stars += '<i class="fas fa-star-half-alt" aria-hidden="true"></i>';
+            }
+            for (let i = fullStars + halfStar; i < 5; i++) {
+                stars += '<i class="far fa-star" aria-hidden="true"></i>';
+            }
+            return stars;
+        }
+
+        // Fallback image URL
+        const FALLBACK_IMAGE = 'https://via.placeholder.com/400x300?text=Course+Image';
+
+        // Fetch and render hero course
+        async function fetchHeroCourse() {
+            const heroContainer = document.getElementById('hero-course');
+            try {
+                const response = await fetch('http://localhost:3000/api/courses');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const courses = await response.json();
+                if (!courses || courses.length === 0) {
+                    throw new Error('No courses found');
+                }
+                const heroCourse = courses.find(course => course.isBestseller) || courses[0];
+                const imageUrl = heroCourse.image && heroCourse.image !== '' ? heroCourse.image : FALLBACK_IMAGE;
+                heroContainer.innerHTML = `
+                    <div class="relative bg-white rounded-xl shadow-xl overflow-hidden hero-image">
+                        <img src="${imageUrl}" alt="${heroCourse.title} preview" class="w-full h-auto" onerror="this.src='${FALLBACK_IMAGE}'">
+                        <div class="p-4">
+                            <div class="flex items-center mb-2">
+                                <div class="flex text-yellow-400">
+                                    ${generateStars(heroCourse.rating)}
+                                </div>
+                                <span class="text-gray-600 ml-2">${heroCourse.rating} (${heroCourse.reviews} reviews)</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800">${heroCourse.title}</h3>
+                            <div class="flex items-center mt-4">
+                                <i class="fas fa-play-circle text-blue-600 mr-2" aria-hidden="true"></i>
+                                <span class="text-sm text-gray-600">${heroCourse.lectures} lectures</span>
+                            </div>
+                            <div class="course-actions mt-4">
+                                <a href="course-details.html?courseId=${heroCourse._id}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition" aria-label="View details for ${heroCourse.title}">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                console.error('Error fetching hero course:', err);
+                heroContainer.innerHTML = `
+                    <div class="text-center text-red-600 p-4 bg-white rounded-xl shadow-xl">
+                        <p>Failed to load hero course. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Fetch and render courses
+        async function fetchCourses() {
+            const courseGrid = document.getElementById('course-grid');
+            try {
+                const response = await fetch('http://localhost:3000/api/courses');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const courses = await response.json();
+                if (!courses || courses.length === 0) {
+                    throw new Error('No courses found');
+                }
+                courseGrid.innerHTML = courses.slice(0, 3).map(course => `
+                    <div class="course-card bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
+                        <div class="relative">
+                            <img src="${course.image || FALLBACK_IMAGE}" alt="${course.title} preview" class="w-full h-48 object-cover" onerror="this.src='${FALLBACK_IMAGE}'">
+                            ${course.isBestseller ? '<div class="absolute top-2 right-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">Bestseller</div>' : ''}
+                        </div>
+                        <div class="p-5">
+                            <div class="flex items-center mb-2">
+                                <div class="flex text-yellow-400 text-sm">
+                                    ${generateStars(course.rating)}
+                                </div>
+                                <span class="text-gray-600 text-sm ml-2">(${course.reviews})</span>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">${course.title}</h3>
+                            <p class="text-gray-600 text-sm mb-4">${course.description}</p>
+                            <div class="flex items-center mb-4">
+                                <i class="fas fa-play-circle text-blue-600 mr-2" aria-hidden="true"></i>
+                                <span class="text-sm text-gray-600">${course.lectures} lectures</span>
+                            </div>
+                            <div class="course-actions">
+                                <a href="course-details.html?courseId=${course._id}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition" aria-label="View details for ${course.title}">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error('Error fetching courses:', err);
+                courseGrid.innerHTML = '<p class="text-red-600 text-center">Failed to load courses. Please try again later.</p>';
+            }
+        }
+
+        // Fetch and render categories
+        async function fetchCategories() {
+            try {
+                const response = await fetch('http://localhost:3000/api/categories');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const categories = await response.json();
+                if (!categories || categories.length === 0) {
+                    throw new Error('No categories found');
+                }
+                const categoryGrid = document.getElementById('category-grid');
+                const footerCategories = document.getElementById('footer-categories');
+                categoryGrid.innerHTML = categories.map(category => `
+                    <a href="courses.html?categoryId=${category._id}" class="category-card bg-white rounded-lg shadow-sm p-6 text-center hover:shadow-md transition duration-300" aria-label="${category.title} courses with ${category.courseCount} available">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas ${category.icon} text-blue-600 text-2xl" aria-hidden="true"></i>
+                        </div>
+                        <h3 class="font-medium text-gray-800 mb-1">${category.title}</h3>
+                        <p class="text-sm text-gray-600">${category.courseCount} Courses</p>
+                    </a>
+                `).join('');
+                footerCategories.innerHTML = categories.map(category => `
+                    <li><a href="courses.html?categoryId=${category._id}" class="text-gray-400 hover:text-white transition" aria-label="Explore ${category.title} courses">${category.title}</a></li>
+                `).join('');
+            } catch (err) {
+                console.error('Error fetching categories:', err);
+                document.getElementById('category-grid').innerHTML = '<p class="text-red-600 text-center">Failed to load categories. Please try again later.</p>';
+            }
+        }
+
+        // Bottom Navigation Toggle
+        const bottomNavToggle = document.getElementById('bottom-nav-toggle');
+        const bottomNav = document.querySelector('.bottom-nav');
+        bottomNavToggle.addEventListener('click', () => {
+            bottomNav.classList.toggle('hidden');
+        });
+
+        // Search Bar Toggle and Redirect
+        const searchButton = document.getElementById('search-toggle');
+        const searchInput = document.getElementById('search-input');
+        searchButton.addEventListener('click', () => {
+            searchInput.classList.toggle('hidden');
+            if (!searchInput.classList.contains('hidden')) {
+                searchInput.focus();
+            }
+        });
+
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            if (searchTerm) {
+                window.location.href = `courses.html?q=${encodeURIComponent(searchTerm)}`;
+            }
+        });
+
+        // FAQ Accordion
+        const faqToggles = document.querySelectorAll('.faq-toggle');
+        faqToggles.forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const content = toggle.nextElementSibling;
+                const isOpen = content.classList.contains('open');
+                const icon = toggle.querySelector('i');
+                faqToggles.forEach(otherToggle => {
+                    const otherContent = otherToggle.nextElementSibling;
+                    if (otherContent !== content) {
+                        otherContent.classList.remove('open');
+                        otherToggle.setAttribute('aria-expanded', 'false');
+                        otherToggle.querySelector('i').classList.remove('fa-chevron-up');
+                        otherToggle.querySelector('i').classList.add('fa-chevron-down');
+                    }
+                });
+                content.classList.toggle('open');
+                toggle.setAttribute('aria-expanded', !isOpen);
+                icon.classList.toggle('fa-chevron-down');
+                icon.classList.toggle('fa-chevron-up');
+            });
+        });
+
+        // Keyboard Accessibility
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !bottomNav.classList.contains('hidden')) {
+                bottomNav.classList.add('hidden');
+            }
+            if (e.key === 'Escape' && !searchInput.classList.contains('hidden')) {
+                searchInput.classList.add('hidden');
+            }
+        });
+
+        // Initialize data fetching
+        fetchHeroCourse();
+        fetchCourses();
+        fetchCategories();
+    </script>
+</body>
+</html>
