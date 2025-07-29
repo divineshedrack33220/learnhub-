@@ -439,208 +439,207 @@
         </div>
     </footer>
 
-    <!-- JavaScript for Interactivity -->
-    <script>
-        // Utility function to generate star rating
-        function generateStars(rating) {
-            const fullStars = Math.floor(rating);
-            const halfStar = rating % 1 >= 0.5 ? 1 : 0;
-            let stars = '';
-            for (let i = 0; i < fullStars; i++) {
-                stars += '<i class="fas fa-star" aria-hidden="true"></i>';
-            }
-            if (halfStar) {
-                stars += '<i class="fas fa-star-half-alt" aria-hidden="true"></i>';
-            }
-            for (let i = fullStars + halfStar; i < 5; i++) {
-                stars += '<i class="far fa-star" aria-hidden="true"></i>';
-            }
-            return stars;
+   <script>
+    // Utility function to generate star rating
+    function generateStars(rating) {
+        const fullStars = Math.floor(rating);
+        const halfStar = rating % 1 >= 0.5 ? 1 : 0;
+        let stars = '';
+        for (let i = 0; i < fullStars; i++) {
+            stars += '<i class="fas fa-star" aria-hidden="true"></i>';
         }
+        if (halfStar) {
+            stars += '<i class="fas fa-star-half-alt" aria-hidden="true"></i>';
+        }
+        for (let i = fullStars + halfStar; i < 5; i++) {
+            stars += '<i class="far fa-star" aria-hidden="true"></i>';
+        }
+        return stars;
+    }
 
-        // Fallback image URL
-        const FALLBACK_IMAGE = 'https://via.placeholder.com/400x300?text=Course+Image';
+    // Fallback image URL
+    const FALLBACK_IMAGE = 'https://via.placeholder.com/400x300?text=Course+Image';
 
-        // Fetch and render hero course
-        async function fetchHeroCourse() {
-            const heroContainer = document.getElementById('hero-course');
-            try {
-                const response = await fetch('learnhub-r94s.onrender.com/api/courses');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const courses = await response.json();
-                if (!courses || courses.length === 0) {
-                    throw new Error('No courses found');
-                }
-                const heroCourse = courses.find(course => course.isBestseller) || courses[0];
-                const imageUrl = heroCourse.image && heroCourse.image !== '' ? heroCourse.image : FALLBACK_IMAGE;
-                heroContainer.innerHTML = `
-                    <div class="relative bg-white rounded-xl shadow-xl overflow-hidden hero-image">
-                        <img src="${imageUrl}" alt="${heroCourse.title} preview" class="w-full h-auto" onerror="this.src='${FALLBACK_IMAGE}'">
-                        <div class="p-4">
-                            <div class="flex items-center mb-2">
-                                <div class="flex text-yellow-400">
-                                    ${generateStars(heroCourse.rating)}
-                                </div>
-                                <span class="text-gray-600 ml-2">${heroCourse.rating} (${heroCourse.reviews} reviews)</span>
+    // Fetch and render hero course
+    async function fetchHeroCourse() {
+        const heroContainer = document.getElementById('hero-course');
+        try {
+            const response = await fetch('https://learnhub-r94s.onrender.com/api/courses');
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const courses = await response.json();
+            if (!courses || courses.length === 0) {
+                throw new Error('No courses found');
+            }
+            const heroCourse = courses.find(course => course.isBestseller) || courses[0];
+            const imageUrl = heroCourse.image && heroCourse.image !== '' ? heroCourse.image : FALLBACK_IMAGE;
+            heroContainer.innerHTML = `
+                <div class="relative bg-white rounded-xl shadow-xl overflow-hidden hero-image">
+                    <img src="${imageUrl}" alt="${heroCourse.title} preview" class="w-full h-auto" onerror="this.src='${FALLBACK_IMAGE}'">
+                    <div class="p-4">
+                        <div class="flex items-center mb-2">
+                            <div class="flex text-yellow-400">
+                                ${generateStars(heroCourse.rating)}
                             </div>
-                            <h3 class="text-lg font-semibold text-gray-800">${heroCourse.title}</h3>
-                            <div class="flex items-center mt-4">
-                                <i class="fas fa-play-circle text-blue-600 mr-2" aria-hidden="true"></i>
-                                <span class="text-sm text-gray-600">${heroCourse.lectures} lectures</span>
-                            </div>
-                            <div class="course-actions mt-4">
-                                <a href="course-details.html?courseId=${heroCourse._id}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition" aria-label="View details for ${heroCourse.title}">View Details</a>
-                            </div>
+                            <span class="text-gray-600 ml-2">${heroCourse.rating} (${heroCourse.reviews} reviews)</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800">${heroCourse.title}</h3>
+                        <div class="flex items-center mt-4">
+                            <i class="fas fa-play-circle text-blue-600 mr-2" aria-hidden="true"></i>
+                            <span class="text-sm text-gray-600">${heroCourse.lectures} lectures</span>
+                        </div>
+                        <div class="course-actions mt-4">
+                            <a href="course-details.html?courseId=${heroCourse._id}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition" aria-label="View details for ${heroCourse.title}">View Details</a>
                         </div>
                     </div>
-                `;
-            } catch (err) {
-                console.error('Error fetching hero course:', err);
-                heroContainer.innerHTML = `
-                    <div class="text-center text-red-600 p-4 bg-white rounded-xl shadow-xl">
-                        <p>Failed to load hero course. Please try again later.</p>
+                </div>
+            `;
+        } catch (err) {
+            console.error('Error fetching hero course:', err);
+            heroContainer.innerHTML = `
+                <div class="text-center text-red-600 p-4 bg-white rounded-xl shadow-xl">
+                    <p>Failed to load hero course. Please try again later.</p>
+                </div>
+            `;
+        }
+    }
+
+    // Fetch and render courses
+    async function fetchCourses() {
+        const courseGrid = document.getElementById('course-grid');
+        try {
+            const response = await fetch('https://learnhub-r94s.onrender.com/api/courses');
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const courses = await response.json();
+            if (!courses || courses.length === 0) {
+                throw new Error('No courses found');
+            }
+            courseGrid.innerHTML = courses.slice(0, 3).map(course => `
+                <div class="course-card bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
+                    <div class="relative">
+                        <img src="${course.image || FALLBACK_IMAGE}" alt="${course.title} preview" class="w-full h-48 object-cover" onerror="this.src='${FALLBACK_IMAGE}'">
+                        ${course.isBestseller ? '<div class="absolute top-2 right-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">Bestseller</div>' : ''}
                     </div>
-                `;
-            }
-        }
-
-        // Fetch and render courses
-        async function fetchCourses() {
-            const courseGrid = document.getElementById('course-grid');
-            try {
-                const response = await fetch('learnhub-r94s.onrender.com/api/courses');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const courses = await response.json();
-                if (!courses || courses.length === 0) {
-                    throw new Error('No courses found');
-                }
-                courseGrid.innerHTML = courses.slice(0, 3).map(course => `
-                    <div class="course-card bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
-                        <div class="relative">
-                            <img src="${course.image || FALLBACK_IMAGE}" alt="${course.title} preview" class="w-full h-48 object-cover" onerror="this.src='${FALLBACK_IMAGE}'">
-                            ${course.isBestseller ? '<div class="absolute top-2 right-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">Bestseller</div>' : ''}
+                    <div class="p-5">
+                        <div class="flex items-center mb-2">
+                            <div class="flex text-yellow-400 text-sm">
+                                ${generateStars(course.rating)}
+                            </div>
+                            <span class="text-gray-600 text-sm ml-2">(${course.reviews})</span>
                         </div>
-                        <div class="p-5">
-                            <div class="flex items-center mb-2">
-                                <div class="flex text-yellow-400 text-sm">
-                                    ${generateStars(course.rating)}
-                                </div>
-                                <span class="text-gray-600 text-sm ml-2">(${course.reviews})</span>
-                            </div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-2">${course.title}</h3>
-                            <p class="text-gray-600 text-sm mb-4">${course.description}</p>
-                            <div class="flex items-center mb-4">
-                                <i class="fas fa-play-circle text-blue-600 mr-2" aria-hidden="true"></i>
-                                <span class="text-sm text-gray-600">${course.lectures} lectures</span>
-                            </div>
-                            <div class="course-actions">
-                                <a href="course-details.html?courseId=${course._id}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition" aria-label="View details for ${course.title}">View Details</a>
-                            </div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">${course.title}</h3>
+                        <p class="text-gray-600 text-sm mb-4">${course.description}</p>
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-play-circle text-blue-600 mr-2" aria-hidden="true"></i>
+                            <span class="text-sm text-gray-600">${course.lectures} lectures</span>
+                        </div>
+                        <div class="course-actions">
+                            <a href="course-details.html?courseId=${course._id}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition" aria-label="View details for ${course.title}">View Details</a>
                         </div>
                     </div>
-                `).join('');
-            } catch (err) {
-                console.error('Error fetching courses:', err);
-                courseGrid.innerHTML = '<p class="text-red-600 text-center">Failed to load courses. Please try again later.</p>';
-            }
+                </div>
+            `).join('');
+        } catch (err) {
+            console.error('Error fetching courses:', err);
+            courseGrid.innerHTML = '<p class="text-red-600 text-center">Failed to load courses. Please try again later.</p>';
         }
+    }
 
-        // Fetch and render categories
-        async function fetchCategories() {
-            try {
-                const response = await fetch('learnhub-r94s.onrender.com/api/categories');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const categories = await response.json();
-                if (!categories || categories.length === 0) {
-                    throw new Error('No categories found');
-                }
-                const categoryGrid = document.getElementById('category-grid');
-                const footerCategories = document.getElementById('footer-categories');
-                categoryGrid.innerHTML = categories.map(category => `
-                    <a href="courses.html?categoryId=${category._id}" class="category-card bg-white rounded-lg shadow-sm p-6 text-center hover:shadow-md transition duration-300" aria-label="${category.title} courses with ${category.courseCount} available">
-                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas ${category.icon} text-blue-600 text-2xl" aria-hidden="true"></i>
-                        </div>
-                        <h3 class="font-medium text-gray-800 mb-1">${category.title}</h3>
-                        <p class="text-sm text-gray-600">${category.courseCount} Courses</p>
-                    </a>
-                `).join('');
-                footerCategories.innerHTML = categories.map(category => `
-                    <li><a href="courses.html?categoryId=${category._id}" class="text-gray-400 hover:text-white transition" aria-label="Explore ${category.title} courses">${category.title}</a></li>
-                `).join('');
-            } catch (err) {
-                console.error('Error fetching categories:', err);
-                document.getElementById('category-grid').innerHTML = '<p class="text-red-600 text-center">Failed to load categories. Please try again later.</p>';
+    // Fetch and render categories
+    async function fetchCategories() {
+        try {
+            const response = await fetch('https://learnhub-r94s.onrender.com/api/categories');
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
             }
+            const categories = await response.json();
+            if (!categories || categories.length === 0) {
+                throw new Error('No categories found');
+            }
+            const categoryGrid = document.getElementById('category-grid');
+            const footerCategories = document.getElementById('footer-categories');
+            categoryGrid.innerHTML = categories.map(category => `
+                <a href="courses.html?categoryId=${category._id}" class="category-card bg-white rounded-lg shadow-sm p-6 text-center hover:shadow-md transition duration-300" aria-label="${category.title} courses with ${category.courseCount} available">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas ${category.icon} text-blue-600 text-2xl" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="font-medium text-gray-800 mb-1">${category.title}</h3>
+                    <p class="text-sm text-gray-600">${category.courseCount} Courses</p>
+                </a>
+            `).join('');
+            footerCategories.innerHTML = categories.map(category => `
+                <li><a href="courses.html?categoryId=${category._id}" class="text-gray-400 hover:text-white transition" aria-label="Explore ${category.title} courses">${category.title}</a></li>
+            `).join('');
+        } catch (err) {
+            console.error('Error fetching categories:', err);
+            document.getElementById('category-grid').innerHTML = '<p class="text-red-600 text-center">Failed to load categories. Please try again later.</p>';
         }
+    }
 
-        // Bottom Navigation Toggle
-        const bottomNavToggle = document.getElementById('bottom-nav-toggle');
-        const bottomNav = document.querySelector('.bottom-nav');
-        bottomNavToggle.addEventListener('click', () => {
-            bottomNav.classList.toggle('hidden');
-        });
+    // Bottom Navigation Toggle
+    const bottomNavToggle = document.getElementById('bottom-nav-toggle');
+    const bottomNav = document.querySelector('.bottom-nav');
+    bottomNavToggle.addEventListener('click', () => {
+        bottomNav.classList.toggle('hidden');
+    });
 
-        // Search Bar Toggle and Redirect
-        const searchButton = document.getElementById('search-toggle');
-        const searchInput = document.getElementById('search-input');
-        searchButton.addEventListener('click', () => {
-            searchInput.classList.toggle('hidden');
-            if (!searchInput.classList.contains('hidden')) {
-                searchInput.focus();
-            }
-        });
+    // Search Bar Toggle and Redirect
+    const searchButton = document.getElementById('search-toggle');
+    const searchInput = document.getElementById('search-input');
+    searchButton.addEventListener('click', () => {
+        searchInput.classList.toggle('hidden');
+        if (!searchInput.classList.contains('hidden')) {
+            searchInput.focus();
+        }
+    });
 
-        searchInput.addEventListener('input', () => {
-            const searchTerm = searchInput.value.toLowerCase();
-            if (searchTerm) {
-                window.location.href = `courses.html?q=${encodeURIComponent(searchTerm)}`;
-            }
-        });
+    searchInput.addEventListener('input', () => {
+        const searchTerm = searchInput.value.toLowerCase();
+        if (searchTerm) {
+            window.location.href = `courses.html?q=${encodeURIComponent(searchTerm)}`;
+        }
+    });
 
-        // FAQ Accordion
-        const faqToggles = document.querySelectorAll('.faq-toggle');
-        faqToggles.forEach(toggle => {
-            toggle.addEventListener('click', () => {
-                const content = toggle.nextElementSibling;
-                const isOpen = content.classList.contains('open');
-                const icon = toggle.querySelector('i');
-                faqToggles.forEach(otherToggle => {
-                    const otherContent = otherToggle.nextElementSibling;
-                    if (otherContent !== content) {
-                        otherContent.classList.remove('open');
-                        otherToggle.setAttribute('aria-expanded', 'false');
-                        otherToggle.querySelector('i').classList.remove('fa-chevron-up');
-                        otherToggle.querySelector('i').classList.add('fa-chevron-down');
-                    }
-                });
-                content.classList.toggle('open');
-                toggle.setAttribute('aria-expanded', !isOpen);
-                icon.classList.toggle('fa-chevron-down');
-                icon.classList.toggle('fa-chevron-up');
+    // FAQ Accordion
+    const faqToggles = document.querySelectorAll('.faq-toggle');
+    faqToggles.forEach(toggle => {
+        toggle.addEventListener('click', () => {
+            const content = toggle.nextElementSibling;
+            const isOpen = content.classList.contains('open');
+            const icon = toggle.querySelector('i');
+            faqToggles.forEach(otherToggle => {
+                const otherContent = otherToggle.nextElementSibling;
+                if (otherContent !== content) {
+                    otherContent.classList.remove('open');
+                    otherToggle.setAttribute('aria-expanded', 'false');
+                    otherToggle.querySelector('i').classList.remove('fa-chevron-up');
+                    otherToggle.querySelector('i').classList.add('fa-chevron-down');
+                }
             });
+            content.classList.toggle('open');
+            toggle.setAttribute('aria-expanded', !isOpen);
+            icon.classList.toggle('fa-chevron-down');
+            icon.classList.toggle('fa-chevron-up');
         });
+    });
 
-        // Keyboard Accessibility
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !bottomNav.classList.contains('hidden')) {
-                bottomNav.classList.add('hidden');
-            }
-            if (e.key === 'Escape' && !searchInput.classList.contains('hidden')) {
-                searchInput.classList.add('hidden');
-            }
-        });
+    // Keyboard Accessibility
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !bottomNav.classList.contains('hidden')) {
+            bottomNav.classList.add('hidden');
+        }
+        if (e.key === 'Escape' && !searchInput.classList.contains('hidden')) {
+            searchInput.classList.add('hidden');
+        }
+    });
 
-        // Initialize data fetching
-        fetchHeroCourse();
-        fetchCourses();
-        fetchCategories();
-    </script>
+    // Initialize data fetching
+    fetchHeroCourse();
+    fetchCourses();
+    fetchCategories();
+</script>
 </body>
 </html>
