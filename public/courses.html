@@ -169,187 +169,187 @@
 
     <!-- JavaScript for Interactivity -->
     <script>
-        // Utility function to generate star rating
-        function generateStars(rating) {
-            const fullStars = Math.floor(rating);
-            const halfStar = rating % 1 >= 0.5 ? 1 : 0;
-            let stars = '';
-            for (let i = 0; i < fullStars; i++) {
-                stars += '<i class="fas fa-star" aria-hidden="true"></i>';
-            }
-            if (halfStar) {
-                stars += '<i class="fas fa-star-half-alt" aria-hidden="true"></i>';
-            }
-            for (let i = fullStars + halfStar; i < 5; i++) {
-                stars += '<i class="far fa-star" aria-hidden="true"></i>';
-            }
-            return stars;
+    // Utility function to generate star rating
+    function generateStars(rating) {
+        const fullStars = Math.floor(rating);
+        const halfStar = rating % 1 >= 0.5 ? 1 : 0;
+        let stars = '';
+        for (let i = 0; i < fullStars; i++) {
+            stars += '<i class="fas fa-star" aria-hidden="true"></i>';
         }
-
-        // Fetch category title
-        async function fetchCategoryTitle(categoryId) {
-            try {
-                const response = await fetch(`http://localhost:3000/api/categories/${categoryId}`);
-                if (!response.ok) throw new Error('Category not found');
-                const category = await response.json();
-                document.getElementById('courses-title').textContent = `${category.title} Courses`;
-            } catch (err) {
-                console.error('Error fetching category:', err);
-                document.getElementById('courses-title').textContent = 'Courses';
-            }
+        if (halfStar) {
+            stars += '<i class="fas fa-star-half-alt" aria-hidden="true"></i>';
         }
+        for (let i = fullStars + halfStar; i < 5; i++) {
+            stars += '<i class="far fa-star" aria-hidden="true"></i>';
+        }
+        return stars;
+    }
 
-        // Fetch and render courses
-        async function fetchCourses(categoryId, searchQuery, levelFilter = 'All', sortOption = 'rating-desc') {
-            try {
-                let url = 'http://localhost:3000/api/courses';
-                if (categoryId) {
-                    url += `?categoryId=${categoryId}`;
-                } else if (searchQuery) {
-                    url = `http://localhost:3000/api/search?q=${encodeURIComponent(searchQuery)}`;
-                }
-                const response = await fetch(url);
-                if (!response.ok) throw new Error('Failed to fetch courses');
-                const data = searchQuery ? (await response.json()).courses : await response.json();
-                let courses = data;
+    // Fetch category title
+    async function fetchCategoryTitle(categoryId) {
+        try {
+            const response = await fetch(`https://learnhub-r94s.onrender.com/api/categories/${categoryId}`);
+            if (!response.ok) throw new Error('Category not found');
+            const category = await response.json();
+            document.getElementById('courses-title').textContent = `${category.title} Courses`;
+        } catch (err) {
+            console.error('Error fetching category:', err);
+            document.getElementById('courses-title').textContent = 'Courses';
+        }
+    }
 
-                // Apply level filter
-                if (levelFilter !== 'All') {
-                    courses = courses.filter(course => course.level === levelFilter);
-                }
+    // Fetch and render courses
+    async function fetchCourses(categoryId, searchQuery, levelFilter = 'All', sortOption = 'rating-desc') {
+        try {
+            let url = 'https://learnhub-r94s.onrender.com/api/courses';
+            if (categoryId) {
+                url += `?categoryId=${categoryId}`;
+            } else if (searchQuery) {
+                url = `https://learnhub-r94s.onrender.com/api/search?q=${encodeURIComponent(searchQuery)}`;
+            }
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Failed to fetch courses');
+            const data = searchQuery ? (await response.json()).courses : await response.json();
+            let courses = data;
 
-                // Apply sorting
-                courses.sort((a, b) => {
-                    if (sortOption === 'rating-desc') return b.rating - a.rating;
-                    if (sortOption === 'rating-asc') return a.rating - b.rating;
-                    if (sortOption === 'reviews-desc') return b.reviews - a.reviews;
-                    if (sortOption === 'reviews-asc') return a.reviews - b.reviews;
-                    return 0;
-                });
+            // Apply level filter
+            if (levelFilter !== 'All') {
+                courses = courses.filter(course => course.level === levelFilter);
+            }
 
-                const courseGrid = document.getElementById('course-grid');
-                courseGrid.innerHTML = courses.length > 0 ? courses.map(course => `
-                    <div class="course-card bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
-                        <div class="relative">
-                            <img src="${course.image}" alt="${course.title} preview" class="w-full h-48 object-cover">
-                            ${course.isBestseller ? '<div class="absolute top-2 right-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">Bestseller</div>' : ''}
+            // Apply sorting
+            courses.sort((a, b) => {
+                if (sortOption === 'rating-desc') return b.rating - a.rating;
+                if (sortOption === 'rating-asc') return a.rating - b.rating;
+                if (sortOption === 'reviews-desc') return b.reviews - a.reviews;
+                if (sortOption === 'reviews-asc') return a.reviews - b.reviews;
+                return 0;
+            });
+
+            const courseGrid = document.getElementById('course-grid');
+            courseGrid.innerHTML = courses.length > 0 ? courses.map(course => `
+                <div class="course-card bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
+                    <div class="relative">
+                        <img src="${course.image}" alt="${course.title} preview" class="w-full h-48 object-cover">
+                        ${course.isBestseller ? '<div class="absolute top-2 right-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">Bestseller</div>' : ''}
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center mb-2">
+                            <div class="flex text-yellow-400 text-sm">
+                                ${generateStars(course.rating)}
+                            </div>
+                            <span class="text-gray-600 text-sm ml-2">(${course.reviews})</span>
                         </div>
-                        <div class="p-5">
-                            <div class="flex items-center mb-2">
-                                <div class="flex text-yellow-400 text-sm">
-                                    ${generateStars(course.rating)}
-                                </div>
-                                <span class="text-gray-600 text-sm ml-2">(${course.reviews})</span>
-                            </div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-2">${course.title}</h3>
-                            <p class="text-gray-600 text-sm mb-4">${course.description}</p>
-                            <div class="flex items-center mb-4">
-                                <i class="fas fa-play-circle text-blue-600 mr-2" aria-hidden="true"></i>
-                                <span class="text-sm text-gray-600">${course.lectures} lectures</span>
-                            </div>
-                            <div class="course-actions">
-                                <a href="course-details.html?courseId=${course._id}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition" aria-label="View details for ${course.title}">View Details</a>
-                            </div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">${course.title}</h3>
+                        <p class="text-gray-600 text-sm mb-4">${course.description}</p>
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-play-circle text-blue-600 mr-2" aria-hidden="true"></i>
+                            <span class="text-sm text-gray-600">${course.lectures} lectures</span>
+                        </div>
+                        <div class="course-actions">
+                            <a href="course-details.html?courseId=${course._id}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition" aria-label="View details for ${course.title}">View Details</a>
                         </div>
                     </div>
-                `).join('') : '<p class="text-gray-600 text-center col-span-full">No courses found.</p>';
-            } catch (err) {
-                console.error('Error fetching courses:', err);
-                document.getElementById('course-grid').innerHTML = '<p class="text-red-600 text-center col-span-full">Failed to load courses.</p>';
-            }
+                </div>
+            `).join('') : '<p class="text-gray-600 text-center col-span-full">No courses found.</p>';
+        } catch (err) {
+            console.error('Error fetching courses:', err);
+            document.getElementById('course-grid').innerHTML = '<p class="text-red-600 text-center col-span-full">Failed to load courses.</p>';
         }
+    }
 
-        // Fetch and render categories in footer
-        async function fetchCategories() {
-            try {
-                const response = await fetch('http://localhost:3000/api/categories');
-                const categories = await response.json();
-                const footerCategories = document.getElementById('footer-categories');
-                footerCategories.innerHTML = categories.map(category => `
-                    <li><a href="courses.html?categoryId=${category._id}" class="text-gray-400 hover:text-white transition" aria-label="Explore ${category.title} courses">${category.title}</a></li>
-                `).join('');
-            } catch (err) {
-                console.error('Error fetching categories:', err);
-                document.getElementById('footer-categories').innerHTML = '<p class="text-red-600">Failed to load categories.</p>';
-            }
+    // Fetch and render categories in footer
+    async function fetchCategories() {
+        try {
+            const response = await fetch('https://learnhub-r94s.onrender.com/api/categories');
+            const categories = await response.json();
+            const footerCategories = document.getElementById('footer-categories');
+            footerCategories.innerHTML = categories.map(category => `
+                <li><a href="courses.html?categoryId=${category._id}" class="text-gray-400 hover:text-white transition" aria-label="Explore ${category.title} courses">${category.title}</a></li>
+            `).join('');
+        } catch (err) {
+            console.error('Error fetching categories:', err);
+            document.getElementById('footer-categories').innerHTML = '<p class="text-red-600">Failed to load categories.</p>';
         }
+    }
 
-        // Initialize page
-        async function initialize() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const categoryId = urlParams.get('categoryId');
-            const searchQuery = urlParams.get('q');
+    // Initialize page
+    async function initialize() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryId = urlParams.get('categoryId');
+        const searchQuery = urlParams.get('q');
 
-            if (categoryId) {
-                await fetchCategoryTitle(categoryId);
-                await fetchCourses(categoryId);
-            } else if (searchQuery) {
-                document.getElementById('courses-title').textContent = `Search Results for "${searchQuery}"`;
-                await fetchCourses(null, searchQuery);
-            } else {
-                await fetchCourses();
-            }
-            await fetchCategories();
+        if (categoryId) {
+            await fetchCategoryTitle(categoryId);
+            await fetchCourses(categoryId);
+        } else if (searchQuery) {
+            document.getElementById('courses-title').textContent = `Search Results for "${searchQuery}"`;
+            await fetchCourses(null, searchQuery);
+        } else {
+            await fetchCourses();
+        }
+        await fetchCategories();
 
-            // Set up filters
-            const filterButtons = document.querySelectorAll('.filter-button');
-            filterButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    filterButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                    const level = button.getAttribute('data-level');
-                    const sortOption = document.getElementById('sort-select').value;
-                    fetchCourses(categoryId, searchQuery, level, sortOption);
-                });
+        // Set up filters
+        const filterButtons = document.querySelectorAll('.filter-button');
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                const level = button.getAttribute('data-level');
+                const sortOption = document.getElementById('sort-select').value;
+                fetchCourses(categoryId, searchQuery, level, sortOption);
             });
+        });
 
-            // Set up sorting
-            document.getElementById('sort-select').addEventListener('change', (e) => {
-                const sortOption = e.target.value;
-                const activeFilter = document.querySelector('.filter-button.active')?.getAttribute('data-level') || 'All';
-                fetchCourses(categoryId, searchQuery, activeFilter, sortOption);
-            });
+        // Set up sorting
+        document.getElementById('sort-select').addEventListener('change', (e) => {
+            const sortOption = e.target.value;
+            const activeFilter = document.querySelector('.filter-button.active')?.getAttribute('data-level') || 'All';
+            fetchCourses(categoryId, searchQuery, activeFilter, sortOption);
+        });
 
-            // Set default filter
-            document.querySelector('.filter-button[data-level="All"]').classList.add('active');
+        // Set default filter
+        document.querySelector('.filter-button[data-level="All"]').classList.add('active');
+    }
+
+    // Bottom Navigation Toggle
+    const bottomNavToggle = document.getElementById('bottom-nav-toggle');
+    const bottomNav = document.querySelector('.bottom-nav');
+    bottomNavToggle.addEventListener('click', () => {
+        bottomNav.classList.toggle('hidden');
+    });
+
+    // Search Bar Toggle and Redirect
+    const searchButton = document.getElementById('search-toggle');
+    const searchInput = document.getElementById('search-input');
+    searchButton.addEventListener('click', () => {
+        searchInput.classList.toggle('hidden');
+        if (!searchInput.classList.contains('hidden')) {
+            searchInput.focus();
         }
+    });
 
-        // Bottom Navigation Toggle
-        const bottomNavToggle = document.getElementById('bottom-nav-toggle');
-        const bottomNav = document.querySelector('.bottom-nav');
-        bottomNavToggle.addEventListener('click', () => {
-            bottomNav.classList.toggle('hidden');
-        });
+    searchInput.addEventListener('input', () => {
+        const searchTerm = searchInput.value.trim();
+        if (searchTerm) {
+            window.location.href = `courses.html?q=${encodeURIComponent(searchTerm)}`;
+        }
+    });
 
-        // Search Bar Toggle and Redirect
-        const searchButton = document.getElementById('search-toggle');
-        const searchInput = document.getElementById('search-input');
-        searchButton.addEventListener('click', () => {
-            searchInput.classList.toggle('hidden');
-            if (!searchInput.classList.contains('hidden')) {
-                searchInput.focus();
-            }
-        });
+    // Keyboard Accessibility
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !bottomNav.classList.contains('hidden')) {
+            bottomNav.classList.add('hidden');
+        }
+        if (e.key === 'Escape' && !searchInput.classList.contains('hidden')) {
+            searchInput.classList.add('hidden');
+        }
+    });
 
-        searchInput.addEventListener('input', () => {
-            const searchTerm = searchInput.value.trim();
-            if (searchTerm) {
-                window.location.href = `courses.html?q=${encodeURIComponent(searchTerm)}`;
-            }
-        });
-
-        // Keyboard Accessibility
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !bottomNav.classList.contains('hidden')) {
-                bottomNav.classList.add('hidden');
-            }
-            if (e.key === 'Escape' && !searchInput.classList.contains('hidden')) {
-                searchInput.classList.add('hidden');
-            }
-        });
-
-        // Initialize
-        initialize();
-    </script>
+    // Initialize
+    initialize();
+</script>
 </body>
 </html>
