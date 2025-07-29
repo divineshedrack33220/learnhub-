@@ -465,7 +465,7 @@
         async function fetchHeroCourse() {
             const heroContainer = document.getElementById('hero-course');
             try {
-                const response = await fetch('http://localhost:3000/api/courses');
+                const response = await fetch('learnhub-r94s.onrender.com/api/courses');
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
@@ -510,7 +510,7 @@
         async function fetchCourses() {
             const courseGrid = document.getElementById('course-grid');
             try {
-                const response = await fetch('http://localhost:3000/api/courses');
+                const response = await fetch('learnhub-r94s.onrender.com/api/courses');
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
@@ -552,7 +552,7 @@
         // Fetch and render categories
         async function fetchCategories() {
             try {
-                const response = await fetch('http://localhost:3000/api/categories');
+                const response = await fetch('learnhub-r94s.onrender.com/api/categories');
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
